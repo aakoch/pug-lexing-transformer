@@ -1,0 +1,30 @@
+{
+  "name": "pug-lexing-transformer",
+  "version": "0.1.0",
+  "description": "Parses Pug taking the output from the indent-transformer",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "mkdir -p dist && cp src/index.js dist/",
+    "test": "npm run build && mocha"
+  },
+  "keywords": [
+    "stream",
+    "transformer",
+    "pug"
+  ],
+  "author": "Adam Koch (aakoch)",
+  "license": "MIT",
+  "dependencies": {
+    "@jaredpalmer/wrapline": "^2.0.2",
+    "command-line-args": "^5.2.0",
+    "command-line-usage": "^6.1.1",
+    "debug": "^4.3.2",
+    "indent-transformer": "file:../indent-transformer",
+    "pug-line-lexer": "file:../pug-line-lexer"
+  },
+  "type": "module",
+  "devDependencies": {
+    "dyp": "^1.0.1",
+    "filecompare": "^1.0.4"
+  }
+}
