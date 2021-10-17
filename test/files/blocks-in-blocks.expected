@@ -1,0 +1,4 @@
+[ 
+{"type":"pug_keyword","name":"extends","val":"./auxiliary/blocks-in-blocks-layout.pug ","lineNumber": 1},  
+{"type":"pug_keyword","name":"block","val":"body ","lineNumber": 3, "children":[ 
+  {"name":"h1","type":"tag","val":"Page 2 ","lineNumber": 4}]}]

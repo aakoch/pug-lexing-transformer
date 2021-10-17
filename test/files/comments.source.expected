@@ -1,0 +1,9 @@
+[ 
+{"type":"comment","val":"- ","lineNumber": 1, "children":[ 
+  {"type":"text","val":"s/s. ","lineNumber": 2}] 
+},  
+{"type":"comment","val":"- test/cases/comments.source.pug ","lineNumber": 4},  
+{"type":"comment","val":"- ","lineNumber": 6, "children":[ 
+  {"type":"text","val":"test/cases/comments.source.pug ","lineNumber": 7},  
+  {"type":"text","val":"when ","lineNumber": 8},  
+  {"type":"text","val":"() ","lineNumber": 9}]}]

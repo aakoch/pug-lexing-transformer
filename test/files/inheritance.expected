@@ -1,0 +1,8 @@
+[ 
+{"type":"pug_keyword","name":"extends","val":"auxiliary/layout.pug ","lineNumber": 2},  
+{"type":"pug_keyword","name":"block","val":"head ","lineNumber": 4, "children":[ 
+  {"type":"tag","name":"script","attrs":["src='jquery.js'"],"lineNumber": 5}] 
+},  
+{"type":"pug_keyword","name":"block","val":"content ","lineNumber": 7, "children":[ 
+  {"name":"h2","type":"tag","val":"Page ","lineNumber": 8},  
+  {"name":"p","type":"tag","val":"Some content ","lineNumber": 9}]}]

@@ -1,0 +1,5 @@
+[ 
+{"name":"ul","type":"tag","lineNumber": 3, "children":[ 
+  {"name":"li","type":"tag","val":"foo ","lineNumber": 4},  
+  {"name":"li","type":"tag","val":"bar ","lineNumber": 6},  
+  {"name":"li","type":"tag","val":"baz ","lineNumber": 8}]}]

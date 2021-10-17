@@ -1,0 +1,5 @@
+[ 
+{"type":"pug_keyword","name":"doctype","val":"html ","lineNumber": 1},  
+{"name":"html","type":"tag","lineNumber": 2, "children":[ 
+  {"name":"body","type":"tag","lineNumber": 3, "children":[ 
+    {"name":"br","type":"tag","val":"/ ","lineNumber": 4}]}]}]

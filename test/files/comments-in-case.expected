@@ -1,0 +1,12 @@
+[ 
+{"type":"pug_keyword","name":"doctype","val":"html ","lineNumber": 1},  
+{"name":"html","type":"tag","lineNumber": 2, "children":[ 
+  {"name":"body","type":"tag","lineNumber": 3},  
+  {"type":"code","val":"var s = 'this' ","lineNumber": 4},  
+  {"type":"pug_keyword","name":"case","val":"s ","lineNumber": 5, "children":[ 
+    {"type":"comment","val":"- Comment ","lineNumber": 6},  
+    {"type":"pug_keyword","name":"when","val":"'this' ","lineNumber": 7, "children":[ 
+      {"name":"p","type":"tag","val":"It's this! ","lineNumber": 8}] 
+},  
+    {"type":"pug_keyword","name":"when","val":"'that' ","lineNumber": 9, "children":[ 
+      {"name":"p","type":"tag","val":"It's that! ","lineNumber": 10}]}]}]}]

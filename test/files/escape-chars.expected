@@ -1,0 +1,3 @@
+[ 
+{"type":"tag","name":"script","lineNumber": 1, "children":[ 
+  {"type":"text","val":"var re = /\\d+/; ","lineNumber": 2}]}]

@@ -1,0 +1,18 @@
+[ 
+{"type":"comment","val":"- see https://github.com/pugjs/pug/issues/1589 ","lineNumber": 1},  
+{"type":"code","val":"var ajax = true ","lineNumber": 3},  
+{"type":"code","val":"if( ajax ) ","lineNumber": 5, "children":[ 
+  {"type":"comment","val":"- return only contents if ajax requests ","lineNumber": 6},  
+  {"type":"pug_keyword","name":"block","val":"contents ","lineNumber": 7, "children":[ 
+    {"name":"p","type":"tag","val":"ajax contents ","lineNumber": 8}]}] 
+},  
+{"type":"code","val":"else ","lineNumber": 10, "children":[ 
+  {"type":"comment","val":"- return all html ","lineNumber": 11},  
+  {"type":"pug_keyword","name":"doctype","val":"html ","lineNumber": 12},  
+  {"name":"html","type":"tag","lineNumber": 13, "children":[ 
+    {"name":"head","type":"tag","lineNumber": 14, "children":[ 
+      {"name":"meta","type":"tag","attrs":[" charset='utf8' "],"lineNumber": 15},  
+      {"name":"title","type":"tag","val":"sample ","lineNumber": 16},  
+      {"name":"body","type":"tag","lineNumber": 17, "children":[ 
+        {"type":"pug_keyword","name":"block","val":"contents ","lineNumber": 18, "children":[ 
+          {"name":"p","type":"tag","val":"all contetns ","lineNumber": 19}]}]}]}]}]}]

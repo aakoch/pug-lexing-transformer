@@ -1,0 +1,4 @@
+[ 
+{"type":"code","val":"var foo = 'bar' ","lineNumber": 1},  
+{"type":"code","val":"var list = [1,2,3] ","lineNumber": 2},  
+{"name":"a","type":"tag","attrs":["class=list, id=foo"],"lineNumber": 3}]

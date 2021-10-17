@@ -1,0 +1,15 @@
+[ 
+{"type":"code","val":" ","lineNumber": 1, "children":[ 
+  {"type":"unbuffered_code","val":"list = [\"uno\", \"dos\", \"tres\", ","lineNumber": 2, "children":[ 
+    {"type":"unbuffered_code","val":"\"cuatro\", \"cinco\", \"seis\"]; ","lineNumber": 3}]}] 
+},  
+{"type":"comment","val":"- Without a block, the element is accepted and no code is generated ","lineNumber": 4},  
+{"type":"code","val":" ","lineNumber": 5},  
+{"type":"unbuffered_code","val":"each item in list ","lineNumber": 6, "children":[ 
+  {"type":"unbuffered_code","val":"- ","lineNumber": 7, "children":[ 
+    {"type":"unbuffered_code","val":"string = item.charAt(0) ","lineNumber": 8, "children":[ 
+      {"type":"unbuffered_code","val":".toUpperCase() + ","lineNumber": 10}] 
+},  
+    {"type":"unbuffered_code","val":"item.slice(1); ","lineNumber": 11}] 
+},  
+  {"type":"unbuffered_code","val":"li= string ","lineNumber": 12}]}]

@@ -1,0 +1,5 @@
+[ 
+{"type":"pug_keyword","name":"doctype","val":"html ","lineNumber": 1},  
+{"name":"input","type":"tag","attrs":["type='checkbox', checked"],"lineNumber": 2},  
+{"name":"input","type":"tag","attrs":["type='checkbox', checked=true"],"lineNumber": 3},  
+{"name":"input","type":"tag","attrs":["type='checkbox', checked=false"],"lineNumber": 4}]

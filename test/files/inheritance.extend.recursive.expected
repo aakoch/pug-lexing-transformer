@@ -1,0 +1,4 @@
+[ 
+{"type":"pug_keyword","name":"extends","val":"/auxiliary/inheritance.extend.recursive-parent.pug ","lineNumber": 1},  
+{"type":"pug_keyword","name":"block","val":"parent ","lineNumber": 3, "children":[ 
+  {"name":"h4","type":"tag","val":"child ","lineNumber": 4}]}]

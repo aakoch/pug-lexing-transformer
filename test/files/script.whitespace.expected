@@ -1,0 +1,6 @@
+[ 
+{"type":"tag","name":"script","lineNumber": 1, "children":[ 
+  {"type":"text","val":"if (foo) { ","lineNumber": 2, "children":[ 
+    {"type":"text","val":"bar(); ","lineNumber": 4}] 
+},  
+  {"type":"text","val":"} ","lineNumber": 6}]}]

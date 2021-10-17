@@ -1,0 +1,16 @@
+[ 
+{"type":"code","val":"var id = 5 ","lineNumber": 1},  
+{"type":"code","val":"function answer() { return 42; } ","lineNumber": 2},  
+{"name":"a","type":"tag","attrs":["href='/user/' + id, class='button'"],"lineNumber": 3},  
+{"name":"a","type":"tag","attrs":["href  =  '/user/' + id, class  =  'button'"],"lineNumber": 4},  
+{"name":"meta","type":"tag","attrs":["key='answer', value=answer()"],"lineNumber": 5},  
+{"name":"a","type":"tag","attrs":["class = ['class1', 'class2']"],"lineNumber": 6},  
+{"name":"a","type":"tag","classes":["tag-class"],"attrs":["class = ['class1', 'class2']"],"lineNumber": 7},  
+{"name":"a","type":"tag","attrs":["href='/user/' + id class='button'"],"lineNumber": 9},  
+{"name":"a","type":"tag","attrs":["href  =  '/user/' + id class  =  'button'"],"lineNumber": 10},  
+{"name":"meta","type":"tag","attrs":["key='answer' value=answer()"],"lineNumber": 11},  
+{"name":"a","type":"tag","attrs":["class = ['class1', 'class2']"],"lineNumber": 12},  
+{"name":"a","type":"tag","classes":["tag-class"],"attrs":["class = ['class1', 'class2']"],"lineNumber": 13},  
+{"name":"div","type":"tag","attrs":["id=id)&attributes({foo: 'bar'}"],"lineNumber": 15},  
+{"type":"code","val":"var bar = null ","lineNumber": 16},  
+{"name":"div","type":"tag","attrs":["foo=null bar=bar)&attributes({baz: 'baz'}"],"lineNumber": 17}]

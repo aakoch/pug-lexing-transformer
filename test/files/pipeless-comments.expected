@@ -1,0 +1,6 @@
+[ 
+{"type":"comment","val":" ","lineNumber": 1, "children":[ 
+  {"type":"text","val":".foo ","lineNumber": 2}] 
+},  
+{"classes":["bar"],"type":"tag","lineNumber": 3, "children":[ 
+  {"classes":["hey"],"type":"tag","lineNumber": 4}]}]

@@ -1,0 +1,7 @@
+[ 
+{"name":"html","type":"tag","lineNumber": 1, "children":[ 
+  {"name":"head","type":"tag","lineNumber": 2, "children":[ 
+    {"type":"pug_keyword","name":"block","val":"head ","lineNumber": 3, "children":[ 
+      {"type":"tag","name":"script","attrs":["src='jquery.js'"],"lineNumber": 4},  
+      {"type":"tag","name":"script","attrs":["src='keymaster.js'"],"lineNumber": 5},  
+      {"type":"tag","name":"script","attrs":["src='caustic.js'"],"lineNumber": 6}]}]}]}]

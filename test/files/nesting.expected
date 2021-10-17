@@ -1,0 +1,10 @@
+[ 
+{"name":"ul","type":"tag","lineNumber": 1, "children":[ 
+  {"name":"li","type":"tag","val":"a ","lineNumber": 2},  
+  {"name":"li","type":"tag","val":"b ","lineNumber": 3},  
+  {"name":"li","type":"tag","lineNumber": 4, "children":[ 
+    {"name":"ul","type":"tag","lineNumber": 5, "children":[ 
+      {"name":"li","type":"tag","val":"c ","lineNumber": 6},  
+      {"name":"li","type":"tag","val":"d ","lineNumber": 7}]}] 
+},  
+  {"name":"li","type":"tag","val":"e ","lineNumber": 8}]}]

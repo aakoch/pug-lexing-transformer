@@ -1,0 +1,47 @@
+[ 
+{"name":"a","type":"tag","attrs":["href='/contact'"],"val":"contact ","lineNumber": 1},  
+{"name":"a","type":"tag","attrs":["href='/save'"],"val":"button save ","lineNumber": 2},  
+{"name":"a","type":"tag","attrs":["foo, bar, baz"],"lineNumber": 3},  
+{"name":"a","type":"tag","attrs":["foo='foo, bar, baz', bar=1"],"lineNumber": 4},  
+{"name":"a","type":"tag","attrs":["foo='((foo))', bar= (1) ? 1 : 0 "],"lineNumber": 5},  
+{"name":"select","type":"tag","lineNumber": 6, "children":[ 
+  {"name":"option","type":"tag","attrs":["value='foo', selected"],"val":"Foo ","lineNumber": 7},  
+  {"name":"option","type":"tag","attrs":["selected, value='bar'"],"val":"Bar ","lineNumber": 8}] 
+},  
+{"name":"a","type":"tag","attrs":["foo=\"class:\""],"lineNumber": 9},  
+{"name":"input","type":"tag","attrs":["pattern='\\\\S+'"],"lineNumber": 10},  
+{"name":"a","type":"tag","attrs":["href='/contact'"],"val":"contact ","lineNumber": 12},  
+{"name":"a","type":"tag","attrs":["href='/save'"],"val":"button save ","lineNumber": 13},  
+{"name":"a","type":"tag","attrs":["foo bar baz"],"lineNumber": 14},  
+{"name":"a","type":"tag","attrs":["foo='foo, bar, baz' bar=1"],"lineNumber": 15},  
+{"name":"a","type":"tag","attrs":["foo='((foo))' bar= (1) ? 1 : 0 "],"lineNumber": 16},  
+{"name":"select","type":"tag","lineNumber": 17, "children":[ 
+  {"name":"option","type":"tag","attrs":["value='foo' selected"],"val":"Foo ","lineNumber": 18},  
+  {"name":"option","type":"tag","attrs":["selected value='bar'"],"val":"Bar ","lineNumber": 19}] 
+},  
+{"name":"a","type":"tag","attrs":["foo=\"class:\""],"lineNumber": 20},  
+{"name":"input","type":"tag","attrs":["pattern='\\\\S+'"],"lineNumber": 21},  
+{"name":"foo","type":"tag","attrs":["terse=\"true\""],"lineNumber": 22},  
+{"name":"foo","type":"tag","attrs":["date=new Date(0)"],"lineNumber": 23},  
+{"name":"foo","type":"tag","attrs":["abc "],"lineNumber": 25, "children":[ 
+  {"attrs":[",def) "],"type":"tag","lineNumber": 26}] 
+},  
+{"name":"foo","type":"tag","attrs":["abc, "],"lineNumber": 27, "children":[ 
+  {"attrs":["def) "],"type":"tag","lineNumber": 28}] 
+},  
+{"name":"foo","type":"tag","attrs":["abc, "],"lineNumber": 29, "children":[ 
+  {"attrs":["def) "],"type":"tag","lineNumber": 30}] 
+},  
+{"name":"foo","type":"tag","attrs":["abc "],"lineNumber": 31, "children":[ 
+  {"attrs":[",def) "],"type":"tag","lineNumber": 32}] 
+},  
+{"name":"foo","type":"tag","attrs":["abc "],"lineNumber": 33, "children":[ 
+  {"attrs":["def) "],"type":"tag","lineNumber": 34}] 
+},  
+{"name":"foo","type":"tag","attrs":["abc "],"lineNumber": 35, "children":[ 
+  {"attrs":["def) "],"type":"tag","lineNumber": 36}] 
+},  
+{"type":"code","val":"var attrs = {foo: 'bar', bar: '<baz>'} ","lineNumber": 38},  
+{"name":"div","type":"tag","val":"&attributes(attrs) ","lineNumber": 40},  
+{"name":"a","type":"tag","attrs":["foo='foo' \"bar\"=\"bar\""],"lineNumber": 42},  
+{"name":"a","type":"tag","attrs":["foo='foo' 'bar'='bar'"],"lineNumber": 43}]
