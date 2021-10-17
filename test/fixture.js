@@ -3,8 +3,8 @@ import equal from '../../indent-transformer/test/chai/equal.js'
 import assert from 'assert'
 const expect = chai.expect
 import stream from 'stream'
-import transformStream from '../src/index.js'
-// const transformStream = _transformStream({ encoding: 'utf8' })
+import transformStream from '../dist/index.js'
+import indentTransformer from 'indent-transformer';
 import intoStream from 'into-stream'
 import concat from 'concat-stream'
 import WrapLine from '@jaredpalmer/wrapline'
@@ -36,10 +36,14 @@ const options = commandLineArgs(optionDefinitions)
 chai.use(equal);
 
 const testName = options.testName
+console.log('testName=' + testName)
 
-const inFilename = 'files/' + testName + ".in"
-const expectedFileName = 'files/' + testName + '.expected'
-const actualOutFileName = 'files/' + testName + '.actual'
+const inFilename = path.join('files', testName + ".in")
+console.log('inFilename=' + inFilename)
+const expectedFileName = path.join('files', testName + ".expected")
+console.log('expectedFileName=' + expectedFileName)
+const actualOutFileName = path.join('files', testName + ".actual")
+console.log('actualOutFileName=' + actualOutFileName)
 
 
 if (options.help || typeof options.testName === 'undefined') {
@@ -58,9 +62,11 @@ if (options.help || typeof options.testName === 'undefined') {
 
 }
 else {
-  const fileInStream = fs.createReadStream(inFilename, { encoding: 'utf8' });
+  fs.accessSync(path.resolve(inFilename), fs.constants.R_OK);
+  const fileInStream = fs.createReadStream(path.resolve(inFilename), { encoding: 'utf8' });
 
   if (options.snapshot) {
+    fs.accessSync(path.resolve(expectedFileName), fs.constants.W_OK);
     const fileOut = fs.createWriteStream(expectedFileName, { encoding: 'utf8' })
     fileInStream.pipe(transformStream).pipe(fileOut)
   }
@@ -74,20 +80,36 @@ else {
     //   console.log(err); // AssertionError if streams differ
     // });
 
+    // fs.accessSync(path.resolve(actualOutFileName) , fs.constants.W_OK);
     const actualOut = fs.createWriteStream(actualOutFileName, { encoding: 'utf8' })
+
     fileInStream
+      .pipe(WrapLine('|'))
+      .pipe(WrapLine(function (pre, line) {
+        // add 'line numbers' to each line
+        pre = pre || 0
+        return pre + 1
+      }))
+      .pipe(indentTransformer())
       .pipe(transformStream)
-      // .pipe(actualOut)
-      .pipe(process.stdout)
+      .pipe(actualOut)
+      // .pipe(process.stdout)
 
     var cb = function (isEqual) {
-      console.log("equal? :" + isEqual);
+      console.log("isEqual=" + isEqual);
+      assert(isEqual)
     }
 
-    fileInStream.on('close', () => {
-      actualOut.close()
-      fc(expectedFileName, actualOutFileName, cb);
-      process.exit()
+    function sleep(millis) {
+      return new Promise(resolve => setTimeout(resolve, millis));
+    }
+
+    fileInStream.on('close', async () =>  {
+        console.log("closing " + actualOutFileName);
+        actualOut.close(() => {
+          console.log(actualOutFileName + " is closed");
+          fc(path.resolve(expectedFileName), path.resolve(actualOutFileName), cb);
+        })
     })
 
     // concat(function (input) {
