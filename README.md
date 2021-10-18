@@ -3,8 +3,16 @@
 
 Incomplete project
 
-## To run one test:
+## TODO
 
-node dist/index.js < test/files/filters-empty.in
+## Command line usage
 
-npm test isn't working yet
+```
+node src/cli.js test/files/interpolated-mixin.in
+
+touch rewrite.pug
+node child_writer.js temp.json
+cat rewrite.pug
+cat test/files/interpolated-mixin.in
+
+```

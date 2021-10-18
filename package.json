@@ -1,7 +1,7 @@
 {
   "name": "pug-lexing-transformer",
   "version": "0.1.0",
-  "description": "Parses Pug taking the output from the indent-transformer",
+  "description": "Parses Pug taking the output from the indent-transformer and running through pug-line-lexer",
   "main": "dist/index.js",
   "scripts": {
     "build": "mkdir -p dist && cp src/index.js dist/",
@@ -10,6 +10,8 @@
   "keywords": [
     "stream",
     "transformer",
+    "lexer",
+    "parser",
     "pug"
   ],
   "author": "Adam Koch (aakoch)",
