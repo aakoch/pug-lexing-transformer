@@ -54,11 +54,16 @@ function exist(obj) {
 }
 
 const functions = {
-  doctype: (obj) => 'doctype ' + obj.val,
-  pug_keyword: (obj) => obj.name + ' ' + obj.val,
-  tag: (obj) => obj.name + functions.if_attrs(obj) + functions.if_assignment(obj) + ' ' + functions.if_val(obj),
-  attrs: (obj) => '(' + obj.attrs + ')',
   assignment: (obj) => '= ' + obj.assignment_val,
+  attrs: (obj) => '(' + obj.attrs + ')',
+  classes:  (obj) => obj.classes.join('.'),
+  code:(obj) => obj.val, 
+  comment:(obj) => obj.val, 
+  doctype: (obj) => 'doctype ' + obj.val,
+  id:  (obj) => '#' + obj.id,
+  pug_keyword: (obj) => obj.name + ' ' + obj.val,
+  tag: (obj) => obj.name + functions.if_id(obj) + functions.if_classes(obj) + functions.if_attrs(obj) + functions.if_assignment(obj) + ' ' + functions.if_val(obj),
+  text:(obj) => obj.val, 
   val: (obj) => obj.val
 }
 
@@ -93,7 +98,7 @@ function printLine(obj, indent, textStartIndent) {
     }
 
     try {
-      arr.push(functions[obj.type].call({}, obj))
+      arr.push(functions[obj.type].call({}, obj) + '\n')
     } catch (e) {
       console.error(e)
       console.error('Function ' + obj.type + ' doesn\'t exist')
