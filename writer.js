@@ -56,14 +56,14 @@ function exist(obj) {
 const functions = {
   assignment: (obj) => '= ' + obj.assignment_val,
   attrs: (obj) => '(' + obj.attrs + ')',
-  classes:  (obj) => obj.classes.join('.'),
-  code:(obj) => obj.val, 
-  comment:(obj) => obj.val, 
+  classes:  (obj) => '.' + obj.classes.join('.'),
+  code:(obj) => '- ' + obj.val, 
+  comment:(obj) => '// ' + obj.val, 
   doctype: (obj) => 'doctype ' + obj.val,
   id:  (obj) => '#' + obj.id,
-  pug_keyword: (obj) => obj.name + ' ' + obj.val,
-  tag: (obj) => obj.name + functions.if_id(obj) + functions.if_classes(obj) + functions.if_attrs(obj) + functions.if_assignment(obj) + ' ' + functions.if_val(obj),
-  text:(obj) => obj.val, 
+  pug_keyword: (obj) => obj.name + (obj.val ? ' ' + obj.val : ''),
+  tag: (obj) => (obj.name ?? '') + functions.if_id(obj) + functions.if_classes(obj) + functions.if_attrs(obj) + functions.if_assignment(obj) + ' ' + functions.if_val(obj),
+  text: (obj) => obj.val, 
   val: (obj) => obj.val
 }
 

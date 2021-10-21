@@ -104,7 +104,7 @@ function doStuff(inputString) {
       else if (this.state[this.state.length - 1] == 'TEXT') {
         this.state.push('TEXT')
       }
-      else if (this.state[this.state.length - 1] == 'UNBUF_CODE_START') {
+      else if (this.state[this.state.length - 1] == 'CODE_START') {
         this.state.pop()
         this.state.push('UNBUF_CODE')
       }
