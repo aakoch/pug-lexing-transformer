@@ -7,7 +7,7 @@ import indentTransformer from 'indent-transformer';
 import WrapLine from '@jaredpalmer/wrapline'
 import parser from 'pug-line-lexer'
 import debugFunc from 'debug'
-const streamDebug = debugFunc('pug-lexing-transformer:line-analyzer')
+const streamDebug = debugFunc('pug-lexing-transformer.line-analyzer')
 const transformerDebug = debugFunc('pug-lexing-transformer')
 let nestingTransformer = {}
 
@@ -81,7 +81,7 @@ function doStuff(inputString) {
   let ret = []
   let dedentCount = 0
 
-  const regex = /(?<INDENT>INDENT)?(?<DEDENT>DEDENT)?(?<NODENT>NODENT)?(?<LINENO>\d+) (?<text>.*)/
+  const regex = /(?<INDENT>IN)?(?<DEDENT>DE)?(?<NODENT>NO)?(?<LINENO>\d+) (?<text>.*)/
   const matches = inputString.match(regex)
   transformerDebug('matches=', matches)
 
