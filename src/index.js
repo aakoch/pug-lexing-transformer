@@ -17,6 +17,10 @@ if (typeof String.fill !== 'function') {
   }
 }
 
+Array.prototype.peek = function() {
+  return this[this.length - 1]
+}
+
 stream.finished(process.stdin, (err) => {
   if (err) {
     console.error('Stream failed', err);
@@ -45,9 +49,9 @@ nestingTransformer = new stream.Transform({
     }
     catch (e) {
       e.lineNo = (this != undefined ? this.lineNo : 'unknown')
-      console.error('\nUnparsable string: ' + str)
+      console.error('\nError parsing line number ' + this.lineNo + ': ' + str.replace(/(IN|NO|DE)\d+ /, '') + '"')
       console.trace()
-      callback(e)
+      callback()
     }
   }
 })
@@ -97,18 +101,18 @@ function doStuff(inputString) {
       // transformerDebug('matches.groups.INDENT=', matches.groups.INDENT)
       this.currentIndent++
 
-      if (this.state[this.state.length - 1] == 'TEXT_START') {
+      if (this.state.peek() == 'TEXT_START') {
         this.state.pop()
         this.state.push('TEXT')
       }
-      else if (this.state[this.state.length - 1] == 'TEXT') {
+      else if (this.state.peek() == 'TEXT') {
         this.state.push('TEXT')
       }
-      else if (this.state[this.state.length - 1] == 'CODE_START') {
+      else if (this.state.peek() == 'CODE_START') {
         this.state.pop()
         this.state.push('UNBUF_CODE')
       }
-      else if (this.state[this.state.length - 1] == 'UNBUF_CODE') {
+      else if (this.state.peek() == 'UNBUF_CODE') {
         this.state.push('UNBUF_CODE')
       }
     }
@@ -130,7 +134,10 @@ function doStuff(inputString) {
         ret.push(this.stack.pop().symbol + ', ')
       }
 
-      if (this.state[this.state.length - 1] == 'TEXT_START') {
+      if (this.state.peek() == 'TEXT_START') {
+        this.state.pop()
+      } 
+      else if (this.state.peek() == 'CODE_START') {
         this.state.pop()
       }
     }
@@ -138,7 +145,7 @@ function doStuff(inputString) {
     const text = matches.groups.text
     if (text.trim().length > 0) {
       transformerDebug('before state=', this.state)
-      const newObj = analyzeLine((this.state.length > 0 ? '<' + this.state[this.state.length - 1] + '>' : '') + text)
+      const newObj = analyzeLine((this.state.length > 0 ? '<' + this.state.peek() + '>' : '') + text)
 
       // transformerDebug('newObj=', newObj)
       let nestedChildren = ''
