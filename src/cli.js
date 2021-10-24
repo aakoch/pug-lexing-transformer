@@ -55,16 +55,8 @@ else {
     }
   }
 
-  stream.finished(process.stdin, (err) => {
-    if (err) {
-      console.error('Stream failed', err);
-    } else {
-      indentTransformer.ended = true
-      nestingTransformer.ended = true
-    }
-  });
-
   const inStream = options.in === '-' ? process.stdin : fs.createReadStream(options.in)
+  try {
   inStream
     .pipe(WrapLine('|'))
     .pipe(WrapLine(function (pre, line) {
@@ -75,12 +67,19 @@ else {
     .pipe(indentTransformer())
     .pipe(nestingTransformer)
     .pipe(options.out == '-' ? process.stdout : fs.createWriteStream(options.out));
+  }
+  catch (e) {
+    throw new Error("Parsing of " + options.in + " failed", { cause: e }, options.in === '-' ? 'stdin' : options.in)
+  }
+
 
   stream.finished(process.stdin, (err) => {
-    setTimeout(function () {
-      console.log()
-      console.log(...debugContent)
-    }, 1)
+    if (err) {
+      throw err;
+    } else {
+      indentTransformer.ended = true
+      nestingTransformer.ended = true
+    }
   });
 
 }

@@ -1,13 +1,8 @@
-import fs from 'fs'
-import path, { parse } from 'path'
 import stream from 'stream'
-import util from 'util'
-import concat from 'concat-stream'
 import indentTransformer from 'indent-transformer';
-import WrapLine from '@jaredpalmer/wrapline'
 import parser from 'pug-line-lexer'
 import debugFunc from 'debug'
-const streamDebug = debugFunc('pug-lexing-transformer.line-analyzer')
+const streamDebug = debugFunc('pug-lexing-transformer:line-analyzer')
 const transformerDebug = debugFunc('pug-lexing-transformer')
 let nestingTransformer = {}
 
@@ -48,10 +43,7 @@ nestingTransformer = new stream.Transform({
       callback();
     }
     catch (e) {
-      e.lineNo = (this != undefined ? this.lineNo : 'unknown')
-      console.error('\nError parsing line number ' + this.lineNo + ': ' + str.replace(/(IN|NO|DE)\d+ /, '') + '"')
-      console.trace()
-      callback()
+      callback(new Error('Error parsing line number ' + this.lineNo + ': ' + str.replace(/(IN|NO|DE)\d+ /, '') + '\nCause: ' + e.message, { cause: e }, null, (this != undefined ? this.lineNo : 'unknown')));
     }
   }
 })
@@ -83,7 +75,7 @@ nestingTransformer.buffer = []
 function doStuff(inputString) {
   transformerDebug('inputString=', inputString)
   let ret = []
-  let dedentCount = 0
+  // let dedentCount = 0
 
   const regex = /(?<INDENT>IN)?(?<DEDENT>DE)?(?<NODENT>NO)?(?<LINENO>\d+) (?<text>.*)/
   const matches = inputString.match(regex)
@@ -123,7 +115,11 @@ function doStuff(inputString) {
       }
 
       this.currentIndent--
-      this.state.pop()
+
+      let lastState = this.state.pop()
+      if (lastState === 'MULTI_LINE_ATTRS') {
+        this.state.push('MULTI_LINE_ATTRS_END')
+      }
     }
     else {
       // need to handle the very first element
@@ -134,19 +130,16 @@ function doStuff(inputString) {
         ret.push(this.stack.pop().symbol + ', ')
       }
 
-      if (this.state.peek() == 'TEXT_START') {
+      if ((this.state.peek() ?? '').endsWith('_START')) {
         this.state.pop()
       } 
-      else if (this.state.peek() == 'CODE_START') {
-        this.state.pop()
-      }
     }
 
     const text = matches.groups.text
     if (text.trim().length > 0) {
       transformerDebug('before state=', this.state)
       const newObj = analyzeLine((this.state.length > 0 ? '<' + this.state.peek() + '>' : '') + text)
-
+      
       // transformerDebug('newObj=', newObj)
       let nestedChildren = ''
       if (newObj.hasOwnProperty('state')) {
@@ -162,6 +155,11 @@ function doStuff(inputString) {
         else {
           this.state.push(newObj.state)
         }
+      }
+      if (newObj.type == 'MULTI_LINE_ATTRS_END') {
+        // MULTI_LINE_ATTRS_END is a one-time use state. If the parser doesn't thrown an error then we should just pop it
+        this.state.pop();
+        this.state.pop();
       }
       transformerDebug('after state=', this.state)
       delete newObj.state
@@ -189,8 +187,5 @@ function analyzeLine(el) {
   streamDebug('returned from parser: ', returnedObj)
   return returnedObj
 }
-
-stream.finished(process.stdin, (err) => {
-});
 
 export default nestingTransformer
