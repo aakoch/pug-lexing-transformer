@@ -4,6 +4,8 @@ import debugFunc from 'debug'
 const debug = debugFunc('writer')
 import commandLineUsage from 'command-line-usage'
 import commandLineArgs from 'command-line-args'
+import chalk from 'chalk'
+
 // import util from 'util';
 
 const optionDefinitions = [
@@ -56,7 +58,7 @@ function exist(obj) {
 const functions = {
   assignment: (obj) => '= ' + obj.assignment_val,
   attrs: (obj) => '(' + obj.attrs + ')',
-  attrs_start: (obj) => '(' + obj.attrs,
+  attrs_start: (obj) => '(' + (obj.attrs ?? ''),
   attrs_cont: (obj) => '  ' + obj.attrs,
   classes: (obj) => '.' + obj.classes.join('.'),
   code: (obj) => '- ' + functions.if_val(obj),
@@ -71,7 +73,8 @@ const functions = {
   tag_with_multiline_attrs: (obj) => (obj.name ?? '') + functions.if_id(obj) + functions.if_classes(obj) + functions.attrs_start(obj),
   text: (obj) => '| ' + obj.val,
   val: (obj) => obj.val,
-  mixin_call: (obj) => obj.name + (obj.attrs ? '(' + obj.attrs + ')' : '')
+  mixin_call: (obj) => obj.name + (obj.attrs ? '(' + obj.attrs + ')' : ''),
+  MULTI_LINE_ATTRS_END: (obj) => ')'
 }
 
 for (const funcKey in functions) {
@@ -125,7 +128,7 @@ function createLine(obj, indent, textStartIndent, controlCharIndent) {
   try {
     lineParts.push(functions[obj.type].call({}, obj))
   } catch (e) {
-    console.error('Function ' + obj.type + ' doesn\'t exist')
+    console.error(chalk.red('Function ' + obj.type + ' doesn\'t exist'))
   }
 
   if (obj.children != undefined) {
