@@ -1,7 +1,0 @@
-[ 
-{"type":"code","val":"var id = 42; ","lineNumber": 2},  
-{"name":"foo","type":"tag","lineNumber": 3, "children":[ 
-  {"type":"text","val":"some ","lineNumber": 4},  
-  {"type":"text","val":"\\#{text} ","lineNumber": 5},  
-  {"type":"text","val":"here ","lineNumber": 6},  
-  {"type":"text","val":"My ID #{\"is {\" + id + \"}\"} ","lineNumber": 7}]}]

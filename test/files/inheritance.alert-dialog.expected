@@ -1,5 +1,0 @@
-[ 
-{"type":"pug_keyword","name":"extends","val":"auxiliary/dialog.pug ","lineNumber": 2},  
-{"type":"pug_keyword","name":"block","val":"content ","lineNumber": 4, "children":[ 
-  {"name":"h1","type":"tag","val":"Alert! ","lineNumber": 5},  
-  {"name":"p","type":"tag","val":"I'm an alert! ","lineNumber": 6}]}]

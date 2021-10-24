@@ -1,4 +1,0 @@
-[ 
-{"name":"html","type":"tag","lineNumber": 1, "children":[ 
-  {"name":"body","type":"tag","lineNumber": 2, "children":[ 
-    {"name":"h1","type":"tag","val":"Title ","lineNumber": 3}]}]}]

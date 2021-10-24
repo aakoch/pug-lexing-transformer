@@ -1,5 +1,0 @@
-[ 
-{"name":"html","type":"tag","lineNumber": 1, "children":[ 
-  {"name":"audio","type":"tag","attrs":["preload='auto', autobuffer, controls"],"lineNumber": 2, "children":[ 
-    {"name":"source","type":"tag","attrs":["src='foo'"],"lineNumber": 3},  
-    {"name":"source","type":"tag","attrs":["src='bar'"],"lineNumber": 4}]}]}]

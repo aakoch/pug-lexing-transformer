@@ -1,8 +1,0 @@
-[ 
-{"type":"code","val":"var user = { name: 'tobi' } ","lineNumber": 1},  
-{"name":"foo","type":"tag","attrs":["data-user=user"],"lineNumber": 2},  
-{"name":"foo","type":"tag","attrs":["data-items=[1,2,3]"],"lineNumber": 3},  
-{"name":"foo","type":"tag","attrs":["data-username='tobi'"],"lineNumber": 4},  
-{"name":"foo","type":"tag","attrs":["data-escaped={message: \"Let's rock!\"}"],"lineNumber": 5},  
-{"name":"foo","type":"tag","attrs":["data-ampersand={message: \"a quote: &quot; this & that\"}"],"lineNumber": 6},  
-{"name":"foo","type":"tag","attrs":["data-epoc=new Date(0)"],"lineNumber": 7}]

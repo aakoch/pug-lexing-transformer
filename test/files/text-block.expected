@@ -1,6 +1,0 @@
-[ 
-{"name":"label","type":"tag","val":"Username: ","lineNumber": 2, "children":[ 
-  {"name":"input","type":"tag","attrs":["type='text', name='user[name]'"],"lineNumber": 3}] 
-},  
-{"name":"label","type":"tag","val":"Password: ","lineNumber": 5, "children":[ 
-  {"name":"input","type":"tag","attrs":["type='text', name='user[pass]'"],"lineNumber": 6}]}]

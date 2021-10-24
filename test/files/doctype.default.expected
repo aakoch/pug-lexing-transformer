@@ -1,5 +1,0 @@
-[ 
-{"type":"pug_keyword","name":"doctype","lineNumber": 1},  
-{"name":"html","type":"tag","lineNumber": 2, "children":[ 
-  {"name":"body","type":"tag","lineNumber": 3, "children":[ 
-    {"name":"h1","type":"tag","val":"Title ","lineNumber": 4}]}]}]

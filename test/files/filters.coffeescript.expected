@@ -1,8 +1,0 @@
-[ 
-{"type":"tag","name":"script","attrs":["type='text/javascript'"],"lineNumber": 1, "children":[ 
-  {"type":"text","val":":coffee-script ","lineNumber": 2, "children":[ 
-    {"type":"text","val":"regexp = /\\n/ ","lineNumber": 3}] 
-},  
-  {"type":"text","val":":coffee-script(minify=true) ","lineNumber": 4, "children":[ 
-    {"type":"text","val":"math = ","lineNumber": 5, "children":[ 
-      {"type":"text","val":"square: (value) -> value * value ","lineNumber": 6}]}]}]}]

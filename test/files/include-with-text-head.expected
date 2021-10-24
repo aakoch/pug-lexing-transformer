@@ -1,4 +1,0 @@
-[ 
-{"name":"head","type":"tag","lineNumber": 1, "children":[ 
-  {"type":"tag","name":"script","attrs":["type='text/javascript'"],"lineNumber": 2, "children":[ 
-    {"type":"text","val":"alert('hello world'); ","lineNumber": 3}]}]}]

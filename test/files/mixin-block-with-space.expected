@@ -1,7 +1,0 @@
-[ 
-{"type":"pug_keyword","name":"mixin","val":"m(id) ","lineNumber": 1, "children":[ 
-  {"name":"div","type":"tag","lineNumber": 2, "children":[ 
-    {"type":"pug_keyword","name":"block","lineNumber": 3}]}] 
-},  
-{"type":"mixin_call","mixin_name":"m","attrs":[") "],"lineNumber": 5, "children":[ 
-  {"type":"text","val":"This text should appear ","lineNumber": 6}]}]

@@ -1,9 +1,0 @@
-[ 
-{"name":"html","type":"tag","lineNumber": 1, "children":[ 
-  {"name":"head","type":"tag","lineNumber": 2, "children":[ 
-    {"type":"tag","name":"style","attrs":["type=\"text/css\""],"lineNumber": 3, "children":[ 
-      {"type":"text","val":":stylus ","lineNumber": 4, "children":[ 
-        {"type":"text","val":"body ","lineNumber": 5, "children":[ 
-          {"type":"text","val":"padding: 50px ","lineNumber": 6}]}]}]}] 
-},  
-  {"name":"body","type":"tag","lineNumber": 7}]}]

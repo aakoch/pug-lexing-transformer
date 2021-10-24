@@ -1,4 +1,0 @@
-[ 
-{"type":"tag","name":"script","attrs":["type='text/x-template'"],"lineNumber": 1, "children":[ 
-  {"type":"text","val":"div(id!='user-<%= user.id %>') ","lineNumber": 2, "children":[ 
-    {"type":"text","val":"h1 <%= user.title %> ","lineNumber": 3}]}]}]

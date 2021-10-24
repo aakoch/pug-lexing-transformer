@@ -1,4 +1,0 @@
-[ 
-{"type":"pug_keyword","name":"include","val":"./auxiliary/mixin-at-end-of-file.pug ","lineNumber": 1},  
-{"type":"mixin_call","mixin_name":"slide","attrs":[") "],"lineNumber": 3, "children":[ 
-  {"name":"p","type":"tag","val":"some awesome content ","lineNumber": 4}]}]

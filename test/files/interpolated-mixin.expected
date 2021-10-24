@@ -1,5 +1,0 @@
-[ 
-{"type":"pug_keyword","name":"mixin","val":"linkit(url) ","lineNumber": 1, "children":[ 
-  {"name":"a","type":"tag","attrs":["href=url"],"val":"= url ","lineNumber": 2}] 
-},  
-{"name":"p","type":"tag","val":"This also works #[+linkit('http://www.bing.com')] so hurrah for Pug ","lineNumber": 4}]

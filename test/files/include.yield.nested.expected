@@ -1,4 +1,0 @@
-[ 
-{"type":"pug_keyword","name":"include","val":"auxiliary/yield-nested.pug ","lineNumber": 2, "children":[ 
-  {"name":"p","type":"tag","val":"some content ","lineNumber": 3},  
-  {"name":"p","type":"tag","val":"and some more ","lineNumber": 4}]}]

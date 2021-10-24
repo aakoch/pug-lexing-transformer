@@ -1,7 +1,0 @@
-[ 
-{"name":"foo","type":"tag","attrs":["attr=\"<%= bar %>\""],"lineNumber": 1},  
-{"name":"foo","type":"tag","attrs":["class=\"<%= bar %>\""],"lineNumber": 2},  
-{"name":"foo","type":"tag","attrs":["attr!=\"<%= bar %>\""],"lineNumber": 3},  
-{"name":"foo","type":"tag","attrs":["class!=\"<%= bar %>\""],"lineNumber": 4},  
-{"name":"foo","type":"tag","attrs":["class!=\"<%= bar %> lol rofl\""],"lineNumber": 5},  
-{"name":"foo","type":"tag","attrs":["class!=\"<%= bar %> lol rofl <%= lmao %>\""],"lineNumber": 6}]

@@ -1,5 +1,0 @@
-[ 
-{"type":"pug_keyword","name":"extends","val":"../fixtures/append/app-layout.pug ","lineNumber": 2},  
-{"type":"pug_keyword","name":"block","val":"append head ","lineNumber": 4, "children":[ 
-  {"type":"tag","name":"script","attrs":["src='foo.js'"],"lineNumber": 5},  
-  {"type":"tag","name":"script","attrs":["src='bar.js'"],"lineNumber": 6}]}]

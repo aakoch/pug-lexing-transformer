@@ -1,5 +1,0 @@
-[ 
-{"name":"a","type":"tag","attrs":["class=['foo', 'bar', 'baz']"],"lineNumber": 1},  
-{"name":"a","type":"tag","classes":["foo"],"attrs":["class='bar'"],"val":"baz ","lineNumber": 5},  
-{"name":"a","type":"tag","classes":["foo-bar"],"val":"_baz ","lineNumber": 9},  
-{"name":"a","type":"tag","attrs":["class={foo: true, bar: false, baz: true}"],"lineNumber": 11}]

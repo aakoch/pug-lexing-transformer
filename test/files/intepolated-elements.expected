@@ -1,4 +1,0 @@
-[ 
-{"name":"p","type":"tag","val":"#[a.rho(href='#', class='rho--modifier') with inline link] ","lineNumber": 1},  
-{"name":"p","type":"tag","val":"Some text #[a.rho(href='#', class='rho--modifier')] ","lineNumber": 2},  
-{"name":"p","type":"tag","val":"Some text #[a.rho(href='#', class='rho--modifier') with inline link] ","lineNumber": 3}]
