@@ -1,5 +1,5 @@
 import chai from 'chai'
-import equal from '../../indent-transformer/test/chai/equal.js'
+import equal from 'chai-equal-for-long-text'
 import assert from 'assert'
 const expect = chai.expect
 import stream from 'stream'

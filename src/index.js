@@ -1,10 +1,12 @@
 import stream from 'stream'
-import indentTransformer from 'indent-transformer';
+import path from 'path';
 import parser from 'pug-line-lexer'
 import debugFunc from 'debug'
+import { inspect } from 'util';
+import debug from 'debug';
 const streamDebug = debugFunc('pug-lexing-transformer:line-analyzer')
 const transformerDebug = debugFunc('pug-lexing-transformer')
-let nestingTransformer = {}
+import { Worker } from 'worker_threads';
 
 if (typeof String.fill !== 'function') {
   String.fill = function (length, char) {
@@ -12,148 +14,187 @@ if (typeof String.fill !== 'function') {
   }
 }
 
-Array.prototype.peek = function() {
+Array.prototype.peek = function () {
   return this[this.length - 1]
 }
 
-stream.finished(process.stdin, (err) => {
-  if (err) {
-    console.error('Stream failed', err);
-  } else {
-    indentTransformer.ended = true
-    nestingTransformer.ended = true
+class LexingTransformer extends stream.Transform {
+  first = true;
+  currentIndent = 0;
+  state = []
+  stack = {
+    internalArr: [],
+    debug: debugFunc('stack'),
+    push: function (txt) {
+      // this.debug('pushing: ', txt)
+      this.length++
+      // this.debug('length: ', this.length)
+      this.internalArr.push(txt)
+    },
+    pop: function () {
+      let txt = this.internalArr.pop()
+      // this.debug('popping: ', txt)
+      this.length--
+      // this.debug('length: ', this.length)
+      return txt
+    },
+    length: 0
   }
-});
+  lineNo = 0
+  buffer = []
+  useAbsolutePath = true
+  filesToAlsoParse = []
 
-nestingTransformer = new stream.Transform({
-  decodeStrings: false,
-  encoding: 'utf-8',
-  flush(callback) {
+  constructor(filename) {
+    transformerDebug('entering constuctor')
+    super({ decodeStrings: true, encoding: 'utf-8' })
+    this.filename = filename
+    this.stack.push({ symbol: ']' })
+  }
+  _flush(callback) {
+    transformerDebug('entering _flush')
     while (this.stack.length > 0) {
       this.push(this.stack.pop().symbol)
     }
     callback()
-  },
-  transform(str, enc, callback) {
-    try {
-      const lines = str.split('\n')
-      lines.filter(line => line.length).forEach(line => {
-        this.push(doStuff.call(this, line))
-      })
-      callback();
+  }
+  _transform(str, enc, callback) {
+    transformerDebug('entering _transform')
+    if (str instanceof Buffer) {
+      str = str.toString()
     }
-    catch (e) {
-      callback(new Error('Error parsing line number ' + this.lineNo + ': ' + str.replace(/(IN|NO|DE)\d+ /, '') + '\nCause: ' + e.message, { cause: e }, null, (this != undefined ? this.lineNo : 'unknown')));
+    if (typeof str === 'string') {
+      transformerDebug('str=', str)
+      try {
+        const lines = str.split('\n')
+        transformerDebug('lines=', lines)
+        lines.filter(line => line.length).forEach(line => {
+          this.push(this.processLine.call(this, line))
+        })
+        callback();
+      }
+      catch (e) {
+        console.error(e)
+        callback(new Error('Error parsing line number ' + this.lineNo + ' of ' + this.filename + ': ' + str.replace(/(IN|NO|DE)\d+ /, '') + '\nCause: ' + e.message, { cause: e }, null, (this != undefined ? this.lineNo : 'unknown')));
+      }
+    }
+    else {
+      callback(new Error('Expected a string but got ' + typeof str + '\nobj=' + inspect(str)))
     }
   }
-})
-nestingTransformer.first = true;
-nestingTransformer.currentIndent = 0;
-nestingTransformer.state = []
-nestingTransformer.stack = {
-  internalArr: [],
-  debug: debugFunc('stack'),
-  push: function (txt) {
-    // this.debug('pushing: ', txt)
-    this.length++
-    // this.debug('length: ', this.length)
-    this.internalArr.push(txt)
-  },
-  pop: function () {
-    let txt = this.internalArr.pop()
-    // this.debug('popping: ', txt)
-    this.length--
-    // this.debug('length: ', this.length)
-    return txt
-  },
-  length: 0
-}
-nestingTransformer.lineNo = 0
-nestingTransformer.stack.push({ symbol: ']' })
-nestingTransformer.buffer = []
 
-function doStuff(inputString) {
-  transformerDebug('inputString=', inputString)
-  let ret = []
-  // let dedentCount = 0
+  _final(callback) {
+    transformerDebug('entering _final')
+    // indentTransformer.ended = true
+    // this.ended = true
+    process.nextTick(function(filesToAlsoParse) { console.log("\n\nFiles to also parse: " + filesToAlsoParse.join(', ')) }, this.filesToAlsoParse)
+    callback()
+  };
 
-  const regex = /(?<INDENT>IN)?(?<DEDENT>DE)?(?<NODENT>NO)?(?<LINENO>\d+) (?<text>.*)/
-  const matches = inputString.match(regex)
-  transformerDebug('matches=', matches)
+  processLine(inputString) {
+    transformerDebug('inputString=', inputString)
+    let ret = []
+    // let dedentCount = 0
 
-  if (matches && matches.groups) {
-    // transformerDebug('matches.groups=', matches.groups)
-    this.lineNo = parseInt(matches.groups.LINENO, 10)
-    // transformerDebug('lineNo=' + this.lineNo)
+    const regex = /(?<INDENT>IN)?(?<DEDENT>DE)?(?<NODENT>NO)?(?<LINENO>\d+) (?<text>.*)/
+    const matches = inputString.match(regex)
+    transformerDebug('matches=', matches)
 
+    if (matches && matches.groups) {
+      // transformerDebug('matches.groups=', matches.groups)
+      this.lineNo = parseInt(matches.groups.LINENO, 10)
+      // transformerDebug('lineNo=' + this.lineNo)
+
+      this.handleDents(matches, ret);
+
+      this.parseLineAndCreateString(matches, ret);
+    }
+    else {
+      throw new Error('Malformed string: ' + inputString.substring(0, 120))
+      // ret.push(inputString)
+    }
+    let retString = ret.join(' \n')
+    if (typeof retString != 'string') {
+      error('lexingTransformer', typeof retString)
+    }
+    transformerDebug('retString=' + retString)
+    return retString
+  }
+
+  handleDents(matches, ret) {
     if (matches.groups.INDENT) {
-      ret.push(', "children":[')
-      this.stack.push({ obj: 'children', symbol: ']' })
+      ret.push(', "children":[');
+      this.stack.push({ obj: 'children', symbol: ']' });
 
       // transformerDebug('matches.groups.INDENT=', matches.groups.INDENT)
-      this.currentIndent++
+      this.currentIndent++;
 
       if (this.state.peek() == 'TEXT_START') {
-        this.state.pop()
-        this.state.push('TEXT')
+        this.state.pop();
+        this.state.push('TEXT');
       }
       else if (this.state.peek() == 'TEXT') {
-        this.state.push('TEXT')
+        this.state.push('TEXT');
       }
       else if (this.state.peek() == 'CODE_START') {
-        this.state.pop()
-        this.state.push('UNBUF_CODE')
+        this.state.pop();
+        this.state.push('UNBUF_CODE');
       }
       else if (this.state.peek() == 'UNBUF_CODE') {
-        this.state.push('UNBUF_CODE')
+        this.state.push('UNBUF_CODE');
       }
     }
     else if (matches.groups.DEDENT) {
-      ret.push(this.stack.pop().symbol + this.stack.pop().symbol)
-      if (matches.groups.text.length) {
-        ret.push(this.stack.pop().symbol + ', ')
+      ret.push(this.stack.pop().symbol + this.stack.pop().symbol);
+
+      if (matches.groups && matches.groups.text.length) {
+        ret.push(this.stack.pop().symbol + ', ');
       }
 
-      this.currentIndent--
+      this.currentIndent--;
 
-      let lastState = this.state.pop()
+      let lastState = this.state.pop();
       if (lastState === 'MULTI_LINE_ATTRS') {
-        this.state.push('MULTI_LINE_ATTRS_END')
+        this.state.push('MULTI_LINE_ATTRS_END');
       }
     }
     else {
       // need to handle the very first element
+      transformerDebug('stack=', this.stack);
       if (this.stack.length == 1) {
-        ret.push('[')
+        ret.push('[');
       }
       else {
-        ret.push(this.stack.pop().symbol + ', ')
+        ret.push(this.stack.pop().symbol + ', ');
       }
 
       if ((this.state.peek() ?? '').endsWith('_START')) {
-        this.state.pop()
-      } 
+        this.state.pop();
+      }
     }
+  }
 
-    const text = matches.groups.text
+  parseLineAndCreateString(matches, ret) {
+    const text = matches.groups.text;
+    transformerDebug(text);
     if (text.trim().length > 0) {
-      transformerDebug('before state=', this.state)
-      const newObj = analyzeLine((this.state.length > 0 ? '<' + this.state.peek() + '>' : '') + text)
-      
+      transformerDebug('before state=', this.state);
+      const newObj = this.analyzeLine((this.state.length > 0 ? '<' + this.state.peek() + '>' : '') + text);
+
       // transformerDebug('newObj=', newObj)
-      let nestedChildren = ''
+      let nestedChildren = '';
       if (newObj.hasOwnProperty('state')) {
         if (newObj.state == 'NESTED') {
           if (newObj.children[0].hasOwnProperty('state')) {
-            this.state.push(newObj.children[0].state)
+            this.state.push(newObj.children[0].state);
           }
-          const childrenStr = JSON.stringify(newObj.children[0])
-          transformerDebug('childrenStr=' + childrenStr)
-          delete newObj.children
-          nestedChildren = ', "children":[' + childrenStr + ']'
+          const childrenStr = JSON.stringify(newObj.children[0]);
+          transformerDebug('childrenStr=' + childrenStr);
+          delete newObj.children;
+          nestedChildren = ', "children":[' + childrenStr + ']';
         }
         else {
-          this.state.push(newObj.state)
+          this.state.push(newObj.state);
         }
       }
       if (newObj.type == 'MULTI_LINE_ATTRS_END') {
@@ -161,31 +202,29 @@ function doStuff(inputString) {
         this.state.pop();
         this.state.pop();
       }
-      transformerDebug('after state=', this.state)
-      delete newObj.state
-      const thingStr = JSON.stringify(newObj)
-      ret.push(String.fill(this.currentIndent * 2) + '{' + thingStr.substring(1, thingStr.length - 1) + ',"lineNumber": ' + this.lineNo + nestedChildren)
+      transformerDebug('after state=', this.state);
+      delete newObj.state;
 
-      this.stack.push({ obj: (newObj.type == 'tag' || newObj.type == 'unknown' ? newObj.name : newObj.type), symbol: '}' })
+      if (newObj.type === 'pug_keyword' && (newObj.name === 'include' || newObj.name === 'extends')) {
+        debug("newObj.filename=" + newObj)
+        this.filesToAlsoParse.push(path.resolve(newObj.source, newObj.val))
+      }
+
+      const newObjStringified = JSON.stringify(newObj);
+      ret.push(String.fill(this.currentIndent * 2) + '{"source":"' + (this.useAbsolutePath ? path.resolve(this.filename) : path.relative('', this.filename)) + '",' + newObjStringified.substring(1, newObjStringified.length - 1) + ',"lineNumber": ' + this.lineNo + nestedChildren);
+
+      this.stack.push({ obj: (newObj.type == 'tag' || newObj.type == 'unknown' ? newObj.name : newObj.type), symbol: '}' });
     }
   }
-  else {
-    transformerDebug('NO matches=', inputString)
-    // ret.push(inputString)
+
+  analyzeLine(el) {
+    streamDebug('sending to parser: ' + el)
+    const returnedObj = parser.parse(el)
+    streamDebug('returned from parser: ', returnedObj)
+    return returnedObj
   }
-  let retString = ret.join(' \n')
-  if (typeof retString != 'string') {
-    error('nestingTransformer', typeof retString)
-  }
-  transformerDebug('retString=' + retString)
-  return retString
 }
 
-function analyzeLine(el) {
-  streamDebug('sending to parser: ' + el)
-  const returnedObj = parser.parse(el)
-  streamDebug('returned from parser: ', returnedObj)
-  return returnedObj
+export default (filename) => {
+  return new LexingTransformer(filename)
 }
-
-export default nestingTransformer
