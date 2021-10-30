@@ -193,14 +193,14 @@ class LexingTransformer extends stream.Transform {
           delete newObj.children;
           nestedChildren = ', "children":[' + childrenStr + ']';
         }
+        else if (newObj.type == 'MULTI_LINE_ATTRS_END') {
+          // MULTI_LINE_ATTRS_END is a one-time use state. If the parser doesn't thrown an error then we should just pop it
+          this.state.pop();
+          this.state.pop();
+        }
         else {
           this.state.push(newObj.state);
         }
-      }
-      if (newObj.type == 'MULTI_LINE_ATTRS_END') {
-        // MULTI_LINE_ATTRS_END is a one-time use state. If the parser doesn't thrown an error then we should just pop it
-        this.state.pop();
-        this.state.pop();
       }
       transformerDebug('after state=', this.state);
       delete newObj.state;
