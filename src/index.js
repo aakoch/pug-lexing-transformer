@@ -3,10 +3,12 @@ import path from 'path';
 import parser from 'pug-line-lexer'
 import debugFunc from 'debug'
 import { inspect } from 'util';
-import debug from 'debug';
+const debug = debugFunc('pug-lexing-transformer')
 const streamDebug = debugFunc('pug-lexing-transformer:line-analyzer')
 const transformerDebug = debugFunc('pug-lexing-transformer')
 import { Worker } from 'worker_threads';
+import fs from 'fs';
+import chalk from 'chalk';
 
 if (typeof String.fill !== 'function') {
   String.fill = function (length, char) {
@@ -44,11 +46,23 @@ class LexingTransformer extends stream.Transform {
   buffer = []
   useAbsolutePath = true
   filesToAlsoParse = []
+  override
 
-  constructor(filename) {
+  constructor(options) {
     transformerDebug('entering constuctor')
     super({ decodeStrings: true, encoding: 'utf-8' })
-    this.filename = filename
+    this.filename = options.inFile
+    if (options.hasOwnProperty('override')) {
+      this.override = options.override
+      // const filestat = fs.lstatSync(options.override);
+      // if (filestat.isDirectory()) {
+      //   this.outputSource = path.relative(options.override, this.filename)
+      //   // fs.mkdirSync(path.dirname(this.outputSource), {recursive: true})
+      // }
+      // else {
+      //   this.outputSource = options.override
+      // }
+    }
     this.stack.push({ symbol: ']' })
   }
   _flush(callback) {
@@ -83,13 +97,13 @@ class LexingTransformer extends stream.Transform {
     }
   }
 
-  _final(callback) {
-    transformerDebug('entering _final')
-    // indentTransformer.ended = true
-    // this.ended = true
-    process.nextTick(function(filesToAlsoParse) { console.log("\n\nFiles to also parse: " + filesToAlsoParse.join(', ')) }, this.filesToAlsoParse)
-    callback()
-  };
+  // _final(callback) {
+  //   transformerDebug('entering _final')
+  //   // indentTransformer.ended = true
+  //   // this.ended = true
+  //   process.nextTick(function (filesToAlsoParse) { console.log("\n\nFiles to also parse: " + filesToAlsoParse.join(', ')) }, this.filesToAlsoParse)
+  //   callback()
+  // };
 
   processLine(inputString) {
     transformerDebug('inputString=', inputString)
@@ -193,7 +207,7 @@ class LexingTransformer extends stream.Transform {
           delete newObj.children;
           nestedChildren = ', "children":[' + childrenStr + ']';
         }
-        else if (newObj.type == 'MULTI_LINE_ATTRS_END') {
+        else if (newObj.state == 'MULTI_LINE_ATTRS_END') {
           // MULTI_LINE_ATTRS_END is a one-time use state. If the parser doesn't thrown an error then we should just pop it
           this.state.pop();
           this.state.pop();
@@ -205,13 +219,53 @@ class LexingTransformer extends stream.Transform {
       transformerDebug('after state=', this.state);
       delete newObj.state;
 
-      if (newObj.type === 'pug_keyword' && (newObj.name === 'include' || newObj.name === 'extends')) {
-        debug("newObj.filename=" + newObj)
-        this.filesToAlsoParse.push(path.resolve(newObj.source, newObj.val))
+      let sourceFile = (this.override ?? (this.useAbsolutePath ? path.resolve(this.filename) : path.relative('', this.filename)))
+      if (newObj.type === 'include' || newObj.type === 'extends') {
+
+        let fileToInclude = newObj.val;
+
+        if (path.extname(fileToInclude) === '') {
+          fileToInclude += '.pug'
+        }
+
+        // console.group(newObj.type + ' ' + newObj.val)
+
+        debug("newObj.val=" + newObj.val)
+        debug('fileToInclude=' + fileToInclude)
+        debug("override=" + this.override)
+
+        debug("path.resolve(path.dirname(this.filename), fileToInclude)=" + 'path.resolve("' +path.dirname(this.filename)+'","'+ fileToInclude+'")')
+        let resolvedPath = path.resolve(path.dirname(this.filename), fileToInclude);
+        
+        debug('real file=' + this.filename)
+        debug('path.relative(\'\', this.filename)=' + path.relative('', this.filename))
+        debug('resolvedPath=' + resolvedPath)
+        // console.groupEnd()
+
+      if (isSupportedFileExtension(path.extname(resolvedPath))) {
+        this.filesToAlsoParse.push(resolvedPath)
+      }
+      else {
+
+      }
+
+      if (exists(resolvedPath)) {
+        debug(chalk.green('File ' + resolvedPath + ' exists'))
+      }
+      else {
+        debug(chalk.red('File ' + resolvedPath + ' does not exist'))
+      }
+
+
+
+        // debug("newObj=", newObj)
+        // debug("sourceFile=" + sourceFile)
+        // debug("override=" + this.override)
+        // debug("newObj.val=" + newObj.val)
       }
 
       const newObjStringified = JSON.stringify(newObj);
-      ret.push(String.fill(this.currentIndent * 2) + '{"source":"' + (this.useAbsolutePath ? path.resolve(this.filename) : path.relative('', this.filename)) + '",' + newObjStringified.substring(1, newObjStringified.length - 1) + ',"lineNumber": ' + this.lineNo + nestedChildren);
+      ret.push(String.fill(this.currentIndent * 2) + '{"source":"' + sourceFile + '",' + newObjStringified.substring(1, newObjStringified.length - 1) + ',"lineNumber": ' + this.lineNo + nestedChildren);
 
       this.stack.push({ obj: (newObj.type == 'tag' || newObj.type == 'unknown' ? newObj.name : newObj.type), symbol: '}' });
     }
@@ -225,6 +279,19 @@ class LexingTransformer extends stream.Transform {
   }
 }
 
-export default (filename) => {
-  return new LexingTransformer(filename)
+
+function exists(linkedFile) {
+  try {
+    fs.accessSync(linkedFile)
+    return true
+  } catch (e) {
+    return false
+  }
 }
+
+function isSupportedFileExtension(fileExtWithDot) {
+  debug('isSupportedFileExtension(): fileExtWithDot=' + fileExtWithDot)
+  return fileExtWithDot.toLowerCase() === '.pug' || fileExtWithDot.toLowerCase() === '.foo-dog'
+}
+
+export default LexingTransformer

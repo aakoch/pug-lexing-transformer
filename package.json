@@ -18,11 +18,13 @@
   "license": "MIT",
   "dependencies": {
     "@jaredpalmer/wrapline": "^2.0.2",
+    "chai-equal-for-long-text": "^0.2.1",
     "chalk": "^4.1.2",
     "command-line-args": "^5.2.0",
     "command-line-usage": "^6.1.1",
     "debug": "^4.3.2",
     "indent-transformer": "file:../indent-transformer",
+    "minimist": "^1.2.5",
     "pug-line-lexer": "file:../pug-line-lexer"
   },
   "type": "module",
