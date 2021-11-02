@@ -1,59 +1,21 @@
-import fs, { exists } from 'fs'
+import fs, { lstatSync } from 'fs'
 import path from 'path'
 import debugFunc from 'debug'
 const debug = debugFunc('writer')
 import commandLineUsage from 'command-line-usage'
 import commandLineArgs from 'command-line-args'
 import chalk from 'chalk'
+import { exists, parseArguments } from '@aakoch/utils'
+import { fileURLToPath } from 'url';
+const filename = fileURLToPath(import.meta.url);
 
-// import util from 'util';
+const options = await parseArguments(process, printUsage())
 
-const optionDefinitions = [
-  {
-    name: 'in', alias: 'i', type: String, defaultValue: '-', defaultOption: true,
-    description: 'Input file or \'-\' for stdin (default)'
-  },
-  {
-    name: 'out', alias: 'o', type: String, defaultValue: '-',
-    description: 'Output file or \'-\' for stdout (default)'
-  },
-  {
-    name: 'help', alias: 'h', type: Boolean,
-    description: 'Print this usage guide.'
-  }
-]
-const options = commandLineArgs(optionDefinitions)
-
-if (options.help || (typeof options.in === 'undefined' && !process.stdin)) {
-  const sections = [
-    {
-      header: 'Child writer',
-      content: 'Converting AST back into Pug'
-    },
-    {
-      header: 'Usage',
-      content: 'node writer.js [-h] [-i inFile] [-o outFile]'
-    },
-    {
-      header: 'Options',
-      optionList: optionDefinitions
-    }
-  ]
-  const usage = commandLineUsage(sections)
-  console.log(usage)
-
-}
+// }
 
 try {
   fs.truncateSync(options.out)
 } catch (ignore) { }
-
-function exist(obj) {
-  if (typeof obj === 'undefined')
-    return ''
-  else
-    return null
-}
 
 const functions = {
   assignment: (obj) => '= ' + obj.assignment_val,
@@ -80,12 +42,27 @@ const functions = {
 for (const funcKey in functions) {
   if (Object.hasOwnProperty.call(functions, funcKey)) {
     functions['if_' + funcKey] = function (obj) {
-      return exist(obj[funcKey]) ?? functions[funcKey](obj)
+      return exists(obj[funcKey]) ?? functions[funcKey](obj)
     }
   }
 }
 
-var source = fs.readFileSync(path.normalize(options.in), 'utf8');
+console.log("options=", options)
+
+try {
+  const lstat = lstatSync(path.resolve(options.in.name))
+  if (!lstat.isFile) {
+    console.error(chalk.red('Input must be a file'))
+    printUsage()
+    process.exit()
+  }
+}
+catch (e) {
+    console.error(chalk.red('Input must be a file'))
+    printUsage()
+    process.exit()
+}
+var source = fs.readFileSync(path.normalize(options.in.name), 'utf8');
 
 var json = JSON.parse(source)
 
@@ -97,6 +74,25 @@ if (options.out == '-') {
 }
 else {
   fs.writeFileSync(options.out, lines.join('\n'))
+}
+
+function printUsage() {
+    const help = ['']
+    const p = str => help.push(str ?? '')
+    const b = str => help.push(chalk.bold(str))
+    b("Pug Lexing Transformer")
+    p('Parses a Pug file and outputs an AST ' + chalk.dim('(not the official one, however)'))
+    p()
+    b('Usage')
+    p(chalk.blue('node ' + path.basename(filename) + ' [-h] [-f override_filename] [inFile] [outFile]'))
+    p('inFile and outFile are both optional and will default to stdin and stdout if omitted.')
+    p('You can also use "-" for inFile and outFile for their respective streams.')
+    p()
+    b('Options')
+    p('  -f       = Override the given filename for path correction')
+    p('  -h       = Print this message')
+    p()
+    console.log(help.join('\n'))
 }
 
 function createLines(arr, indent, textStartIndent, controlCharIndent) {

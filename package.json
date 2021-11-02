@@ -25,7 +25,8 @@
     "debug": "^4.3.2",
     "indent-transformer": "file:../indent-transformer",
     "minimist": "^1.2.5",
-    "pug-line-lexer": "file:../pug-line-lexer"
+    "pug-line-lexer": "file:../pug-line-lexer",
+    "@aakoch/utils": "file:../utils"
   },
   "type": "module",
   "devDependencies": {
