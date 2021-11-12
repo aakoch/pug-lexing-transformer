@@ -1,6 +1,6 @@
 import stream from 'stream'
 import path from 'path';
-import parser from 'pug-line-lexer'
+import { parser } from 'pug-line-lexer'
 import debugFunc from 'debug'
 import { inspect } from 'util';
 const debug = debugFunc('pug-lexing-transformer')

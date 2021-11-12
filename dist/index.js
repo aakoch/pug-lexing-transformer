@@ -1,6 +1,6 @@
 import stream from 'stream'
 import path from 'path';
-import parser from 'pug-line-lexer'
+import { parser } from 'pug-line-lexer'
 import debugFunc from 'debug'
 import { inspect } from 'util';
 const debug = debugFunc('pug-lexing-transformer')
@@ -9,16 +9,7 @@ const transformerDebug = debugFunc('pug-lexing-transformer')
 import { Worker } from 'worker_threads';
 import fs from 'fs';
 import chalk from 'chalk';
-
-if (typeof String.fill !== 'function') {
-  String.fill = function (length, char) {
-    return ''.padStart(length, char || ' ')
-  }
-}
-
-Array.prototype.peek = function () {
-  return this[this.length - 1]
-}
+import { exists, isSupportedFileExtension } from '@aakoch/utils'
 
 class LexingTransformer extends stream.Transform {
   first = true;
@@ -277,21 +268,6 @@ class LexingTransformer extends stream.Transform {
     streamDebug('returned from parser: ', returnedObj)
     return returnedObj
   }
-}
-
-
-function exists(linkedFile) {
-  try {
-    fs.accessSync(linkedFile)
-    return true
-  } catch (e) {
-    return false
-  }
-}
-
-function isSupportedFileExtension(fileExtWithDot) {
-  debug('isSupportedFileExtension(): fileExtWithDot=' + fileExtWithDot)
-  return fileExtWithDot.toLowerCase() === '.pug' || fileExtWithDot.toLowerCase() === '.foo-dog'
 }
 
 export default LexingTransformer
