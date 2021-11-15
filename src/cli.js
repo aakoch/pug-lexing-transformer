@@ -46,7 +46,7 @@ async function run(options) {
     if (chalk.stderr.supportsColor)
       console.error(chalk.stderr(chalk.red(e.message)) + '\n', e);
     else {
-      console.error(String.fill(30, '*') + '\n' + e.message);
+      console.error('*'.repeat(30) + '\n' + e.message);
     }
   }
 }

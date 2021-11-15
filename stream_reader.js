@@ -53,12 +53,6 @@ else {
     return this.replaceAll('\\', '\\\\').replaceAll('"', '\\\"')
   }
 
-  if (typeof String.fill !== 'function') {
-    String.fill = function (length, char) {
-      return ''.padStart(length, char || ' ')
-    }
-  }
-
   stream.finished(process.stdin, (err) => {
     if (err) {
       console.error('Stream failed', err);
@@ -201,7 +195,7 @@ else {
         debug('nestingTransformer', 'after state=', this.state)
         delete newObj.state
         const thingStr = JSON.stringify(newObj)
-        ret.push(String.fill(this.currentIndent * 2) + '{' + thingStr.substring(1, thingStr.length - 1) + ',"lineNumber": ' + this.lineNo + nestedChildren)
+        ret.push(' '.repeat(this.currentIndent * 2) + '{' + thingStr.substring(1, thingStr.length - 1) + ',"lineNumber": ' + this.lineNo + nestedChildren)
 
         this.stack.push({ obj: (newObj.type == 'tag' || newObj.type == 'unknown' ? newObj.name : newObj.type), symbol: '}' })
       }
