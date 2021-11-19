@@ -35,7 +35,7 @@ function printUsage() {
 
 
 const options = await parseArguments(process, printUsage);
-console.log(options)
+// console.log(options)
 await run(options);
 
 async function run(options) {
@@ -91,7 +91,7 @@ async function processFile(options) {
 
 
               const options = await parseArguments(process, printUsage);
-              console.log(options)
+              // console.log(options)
               await run(options);
 
 

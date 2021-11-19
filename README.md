@@ -9,6 +9,11 @@ Incomplete project
 
 ```
 node src/cli.js test/files/interpolated-mixin.in
+node src/cli.js test/pug/attrs.js.pug
+
+for f in $(ls test/pug/*.pug); do node src/cli $f $f.json; done
+rename -d ".pug" test/pug/*.pug.json
+mv test/pug/*.json ../generator/test/json/
 
 touch rewrite.pug
 node child_writer.js temp.json
