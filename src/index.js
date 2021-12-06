@@ -209,11 +209,11 @@ class LexingTransformer extends stream.Transform {
         }
       }
 
-      if (newObj.hasOwnProperty('val') && newObj.val.includes('#[')) {
-        const inlineParsed = inlineParser.parse(newObj.val.slice(2, -1))
-        delete newObj.val
-        newObj.children = (newObj.children || []).push(inlineParsed)
-      }
+      // if (newObj.hasOwnProperty('val') && newObj.val.indexOf('#[') == 0 && newObj.val.endsWith(']')) {
+      //   const inlineParsed = inlineParser.parse(newObj.val.slice(2, -1))
+      //   delete newObj.val
+      //   newObj.children = (newObj.children || []).push(inlineParsed)
+      // }
 
       transformerDebug('after state=', this.state);
       delete newObj.state;
