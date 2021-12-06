@@ -1,6 +1,6 @@
 import stream from 'stream'
 import path from 'path';
-import { parser } from 'pug-line-lexer'
+import { parser, inlineParser } from 'pug-line-lexer'
 import debugFunc from 'debug'
 import { inspect } from 'util';
 const debug = debugFunc('pug-lexing-transformer')
@@ -158,10 +158,10 @@ class LexingTransformer extends stream.Transform {
 
       this.currentIndent--;
 
-      let lastState = this.state.pop();
-      if (lastState === 'MULTI_LINE_ATTRS') {
-        this.state.push('MULTI_LINE_ATTRS_END');
-      }
+      // let lastState = this.state.pop();
+      // if (lastState === 'MULTI_LINE_ATTRS') {
+      //   this.state.push('MULTI_LINE_ATTRS_END');
+      // }
     }
     else {
       // need to handle the very first element
@@ -186,7 +186,7 @@ class LexingTransformer extends stream.Transform {
       transformerDebug('before state=', this.state);
       const newObj = this.analyzeLine((this.state.length > 0 ? '<' + this.state.peek() + '>' : '') + text);
 
-      // transformerDebug('newObj=', newObj)
+      transformerDebug('newObj=', newObj)
       let nestedChildren = '';
       if (newObj.hasOwnProperty('state')) {
         if (newObj.state == 'NESTED') {
@@ -198,15 +198,23 @@ class LexingTransformer extends stream.Transform {
           delete newObj.children;
           nestedChildren = ', "children":[' + childrenStr + ']';
         }
-        else if (newObj.state == 'MULTI_LINE_ATTRS_END') {
-          // MULTI_LINE_ATTRS_END is a one-time use state. If the parser doesn't thrown an error then we should just pop it
-          this.state.pop();
+        else if (this.state.peek() == 'MULTI_LINE_ATTRS' && newObj.state == 'MULTI_LINE_ATTRS') {
+          // this.state.pop();
+        }
+        else if (this.state.peek() == 'MULTI_LINE_ATTRS' && !newObj.hasOwnProperty('state')) {
           this.state.pop();
         }
         else {
           this.state.push(newObj.state);
         }
       }
+
+      if (newObj.hasOwnProperty('val') && newObj.val.includes('#[')) {
+        const inlineParsed = inlineParser.parse(newObj.val.slice(2, -1))
+        delete newObj.val
+        newObj.children = (newObj.children || []).push(inlineParsed)
+      }
+
       transformerDebug('after state=', this.state);
       delete newObj.state;
 
