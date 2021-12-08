@@ -11,9 +11,17 @@ Incomplete project
 node src/cli.js test/files/interpolated-mixin.in
 node src/cli.js test/pug/attrs.js.pug
 
-for f in $(ls test/pug/*.pug); do node src/cli $f $f.json; done
-rename -d ".pug" test/pug/*.pug.json
-mv test/pug/*.json ../generator/test/json/
+mkdir -p build/test/pug
+
+for f in $(ls test/pug/*.pug); do node src/cli $f build/$f.json; done
+or
+for f in $(ls test/pug/*.pug); do node src/cli $f build/$f.json 2> build/$f.err; done
+find build/test/pug/ -size 0c -exec rm {} \;
+
+
+rename -d ".pug" build/test/pug/*.pug.json
+mv build/test/pug/*.json ../generator/test/json/
+
 
 touch rewrite.pug
 node child_writer.js temp.json

@@ -1,0 +1,12 @@
+[ 
+{"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/html.pug","type":"code","val":"var version = 1449104952939","lineNumber": 1},  
+{"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/html.pug","type":"text","val":"<ul>","lineNumber": 3, "children":[ 
+  {"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/html.pug","type":"text","val":"<li>foo</li>","lineNumber": 4},  
+  {"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/html.pug","type":"text","val":"<li>bar</li>","lineNumber": 5},  
+  {"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/html.pug","type":"text","val":"<li>baz</li>","lineNumber": 6}] 
+},  
+{"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/html.pug","type":"text","val":"</ul>","lineNumber": 7},  
+{"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/html.pug","type":"html_comment","children":[{"type":"text","val":"build:js /js/app.min.js?v="},{"type":"interpolation","name":"#{version}"}],"lineNumber": 9},  
+{"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/html.pug","type":"html_comment","val":"endbuild","lineNumber": 10},  
+{"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/html.pug","name":"p","type":"tag","val":"You can <em>embed</em> html as well.","lineNumber": 12},  
+{"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/html.pug","name":"p","type":"tag","lineNumber": 13, "children":[{"type":"text","val":"<strong>Even</strong> as the body of a block expansion."}]}]
