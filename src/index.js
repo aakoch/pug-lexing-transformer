@@ -54,6 +54,14 @@ class LexingTransformer extends stream.Transform {
       //   this.outputSource = options.override
       // }
     }
+    // transformerDebug('parser=', parser)
+    // transformerDebug('Object.keys(parser.parser)=', Object.keys(parser.parser))
+    transformerDebug('options=', options)
+    transformerDebug('parser.parser.options=', parser.parser.options)
+    if (options.hasOwnProperty('allowDigitToStartClassName')) {
+      transformerDebug('Setting allowDigitToStartClassName to ' + options.allowDigitToStartClassName)
+      parser.parser.options.allowDigitToStartClassName = options.allowDigitToStartClassName
+    }
     this.stack.push({ symbol: ']' })
   }
   _flush(callback) {

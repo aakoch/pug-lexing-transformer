@@ -35,7 +35,7 @@ function printUsage() {
 
 
 const options = await parseArguments(process, printUsage);
-// console.log(options)
+debug('options=', inspect(options, false, 2));
 await run(options);
 
 async function run(options) {
@@ -54,11 +54,11 @@ async function run(options) {
 async function processFile(options) {
 
   debug(`piping streams together`);
-  debug(`options.in=${inspect(options.in, false, 0)}`);
+  debug('options=', inspect(options, false, 2));
   let fullFilename;
   try {
     fullFilename = path.resolve(options.in.name);
-    const lexingTransformer = new LexingTransformer({ inFile: fullFilename, override: options.override });
+    const lexingTransformer = new LexingTransformer({ inFile: fullFilename, override: options.override, allowDigitToStartClassName: options.allowDigitToStartClassName ?? false });
     const fullStream = options.in.createStream()
       .pipe(WrapLine('|'))
       .pipe(WrapLine(function (pre, line) {
