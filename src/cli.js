@@ -6,6 +6,7 @@ import WrapLine from '@jaredpalmer/wrapline'
 import debugFunc from 'debug'
 const debug = debugFunc('pug-lexing-transformer:cli')
 import LexingTransformer from './index.js'
+import { PostLexingTransformer } from 'post-lexing-transformer'
 import chalk from 'chalk';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
@@ -59,6 +60,7 @@ async function processFile(options) {
   try {
     fullFilename = path.resolve(options.in.name);
     const lexingTransformer = new LexingTransformer({ inFile: fullFilename, override: options.override, allowDigitToStartClassName: options.allowDigitToStartClassName ?? false });
+    const postLexingTransformer = new PostLexingTransformer()
     const fullStream = options.in.createStream()
       .pipe(WrapLine('|'))
       .pipe(WrapLine(function (pre, line) {
@@ -68,6 +70,7 @@ async function processFile(options) {
       }))
       .pipe(indentTransformer())
       .pipe(lexingTransformer)
+      .pipe(postLexingTransformer)
       .pipe(options.out.createStream());
 
     stream.finished(fullStream, async (err) => {

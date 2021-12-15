@@ -10,6 +10,7 @@ import { Worker } from 'worker_threads';
 import fs from 'fs';
 import chalk from 'chalk';
 import { exists, isSupportedFileExtension } from '@aakoch/utils'
+import FooDogIndentState from './fooDogIndentState.js'
 
 class LexingTransformer extends stream.Transform {
   first = true;
@@ -38,10 +39,12 @@ class LexingTransformer extends stream.Transform {
   useAbsolutePath = true
   filesToAlsoParse = []
   override
+  indentState = new FooDogIndentState()
 
   constructor(options) {
-    transformerDebug('entering constuctor')
     super({ decodeStrings: true, encoding: 'utf-8' })
+    
+    transformerDebug('entering constuctor')
     this.filename = options.inFile
     if (options.hasOwnProperty('override')) {
       this.override = options.override
@@ -87,6 +90,7 @@ class LexingTransformer extends stream.Transform {
         callback();
       }
       catch (e) {
+        console.error("ERROR ".repeat(100))
         console.error(e)
         callback(new Error('Error parsing line number ' + this.lineNo + ' of ' + this.filename + ': ' + str.replace(/(IN|NO|DE)\d+ /, '') + '\nCause: ' + e.message, { cause: e }, null, (this != undefined ? this.lineNo : 'unknown')));
       }
@@ -136,11 +140,14 @@ class LexingTransformer extends stream.Transform {
 
   handleDents(matches, ret) {
     if (matches.groups.INDENT) {
+      this.indentState.indent()
+
       ret.push(', "children":[');
       this.stack.push({ obj: 'children', symbol: ']' });
 
       // transformerDebug('matches.groups.INDENT=', matches.groups.INDENT)
       this.currentIndent++;
+
 
       if (this.state.peek() == 'TEXT_START') {
         this.state.pop();
@@ -158,6 +165,8 @@ class LexingTransformer extends stream.Transform {
       }
     }
     else if (matches.groups.DEDENT) {
+      this.indentState.dedent()
+
       ret.push(this.stack.pop().symbol + this.stack.pop().symbol);
 
       if (matches.groups && matches.groups.text.length) {
@@ -166,12 +175,14 @@ class LexingTransformer extends stream.Transform {
 
       this.currentIndent--;
 
-      // let lastState = this.state.pop();
+      let lastState = this.state.pop();
       // if (lastState === 'MULTI_LINE_ATTRS') {
       //   this.state.push('MULTI_LINE_ATTRS_END');
       // }
     }
     else {
+      this.indentState.nodent()
+
       // need to handle the very first element
       transformerDebug('stack=', this.stack);
       if (this.stack.length == 1) {
@@ -197,6 +208,8 @@ class LexingTransformer extends stream.Transform {
       transformerDebug('newObj=', newObj)
       let nestedChildren = '';
       if (newObj.hasOwnProperty('state')) {
+        this.indentState.setNewState(newObj.state)
+
         if (newObj.state == 'NESTED') {
           if (newObj.children[0].hasOwnProperty('state')) {
             this.state.push(newObj.children[0].state);
@@ -215,6 +228,9 @@ class LexingTransformer extends stream.Transform {
         else {
           this.state.push(newObj.state);
         }
+      }
+      else {
+        this.state.pop();
       }
 
       // if (newObj.hasOwnProperty('val') && newObj.val.indexOf('#[') == 0 && newObj.val.endsWith(']')) {
@@ -249,26 +265,19 @@ class LexingTransformer extends stream.Transform {
         debug('resolvedPath=' + resolvedPath)
         // console.groupEnd()
 
-      if (isSupportedFileExtension(path.extname(resolvedPath))) {
-        this.filesToAlsoParse.push(resolvedPath)
-      }
-      else {
+        if (isSupportedFileExtension(path.extname(resolvedPath))) {
+          this.filesToAlsoParse.push(resolvedPath)
+        }
+        else {
 
-      }
+        }
 
-      if (exists(resolvedPath)) {
-        debug(chalk.green('File ' + resolvedPath + ' exists'))
-      }
-      else {
-        debug(chalk.red('File ' + resolvedPath + ' does not exist'))
-      }
-
-
-
-        // debug("newObj=", newObj)
-        // debug("sourceFile=" + sourceFile)
-        // debug("override=" + this.override)
-        // debug("newObj.val=" + newObj.val)
+        if (exists(resolvedPath)) {
+          debug(chalk.green('File ' + resolvedPath + ' exists'))
+        }
+        else {
+          debug(chalk.red('File ' + resolvedPath + ' does not exist'))
+        }
       }
 
       const newObjStringified = JSON.stringify(newObj);

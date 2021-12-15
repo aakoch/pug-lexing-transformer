@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "mkdir -p dist && cp src/index.js dist/",
-    "test": "npm run build && mocha"
+    "test": "tap",
+    "snap": "tap"
   },
   "keywords": [
     "stream",
@@ -17,6 +18,7 @@
   "author": "Adam Koch (aakoch)",
   "license": "MIT",
   "dependencies": {
+    "@aakoch/utils": "file:../utils",
     "@jaredpalmer/wrapline": "^2.0.2",
     "chai-equal-for-long-text": "^0.2.1",
     "chalk": "^4.1.2",
@@ -25,12 +27,22 @@
     "debug": "^4.3.2",
     "indent-transformer": "file:../indent-transformer",
     "minimist": "^1.2.5",
-    "pug-line-lexer": "file:../pug-line-lexer",
-    "@aakoch/utils": "file:../utils"
+    "post-lexing-transformer": "file:../post-lexing-transformer",
+    "pug-line-lexer": "file:../pug-line-lexer"
   },
   "type": "module",
   "devDependencies": {
+    "@istanbuljs/esm-loader-hook": "^0.1.2",
     "dyp": "^1.0.1",
-    "filecompare": "^1.0.4"
+    "filecompare": "^1.0.4",
+    "nyc": "^15.1.0",
+    "tap": "^15.1.5"
+  },
+  "tap": {
+    "node-arg": [
+      "--no-warnings",
+      "--experimental-loader",
+      "@istanbuljs/esm-loader-hook"
+    ]
   }
 }
