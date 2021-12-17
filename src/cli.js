@@ -22,13 +22,14 @@ function printUsage() {
   p('Parses a Pug file and outputs an AST ' + chalk.dim('(not the official one, however)'))
   p()
   b('Usage')
-  p(chalk.blue('node ' + path.basename(__filename) + ' [-h] [-f override_filename] [inFile] [outFile]'))
+  p(chalk.blue('node ' + path.basename(__filename) + ' [-h] [-f override_filename] [--allow-digits-to-start-css-classes=[true|false]] [inFile] [outFile]'))
   p('inFile and outFile are both optional and will default to stdin and stdout if omitted.')
   p('You can also use "-" for inFile and outFile for their respective streams.')
   p()
   b('Options')
-  p('  -f       = Override the given filename for path correction')
-  p('  -h       = Print this message')
+  p('  --allow-digits-to-start-css-classes=[true|false]')
+  p('  -f       : Override the given filename for path correction')
+  p('  -h       : Print this message')
   p()
 
   console.log(help.join('\n'))
@@ -52,9 +53,15 @@ async function run(options) {
   }
 }
 
-async function processFile(options) {
+// function topLevel() {
+//   let stacktrace = new Error().stack;
+//   console.log(process)
+//   return stacktrace.length <= 544;
+// }
 
-  debug(`piping streams together`);
+var alreadyParsed = []
+
+async function processFile(options) {
   debug('options=', inspect(options, false, 2));
   let fullFilename;
   try {
@@ -74,7 +81,6 @@ async function processFile(options) {
       .pipe(options.out.createStream());
 
     stream.finished(fullStream, async (err) => {
-      debug("Entering stream finished");
       if (err) {
         throw err;
       } else if (lexingTransformer.filesToAlsoParse.length) {
@@ -92,12 +98,9 @@ async function processFile(options) {
             else {
               console.log(prefix + chalk.green('parsing to ' + path.resolve('build' + filename + '.json')));
 
-
               const options = await parseArguments(process, printUsage);
               // console.log(options)
               await run(options);
-
-
 
               // await run({
               //   _: [
@@ -120,11 +123,3 @@ async function processFile(options) {
     throw new Error(`Could not parse ${options.in.name}`, { cause: e }, fullFilename);
   }
 }
-
-// function topLevel() {
-//   let stacktrace = new Error().stack;
-//   console.log(process)
-//   return stacktrace.length <= 544;
-// }
-
-var alreadyParsed = []
