@@ -160,3 +160,15 @@ tap.test('Dedenting the same state should NOT decrement the state indent count',
 
   test.end()
 })
+
+
+tap.test('Calling indent() with null state uses previous state', test => {
+  const indentState = new IndentState()
+  indentState.setNewState('twelve')
+  indentState.indent()
+  indentState.setNewState(null)
+  indentState.indent()
+  tap.same(indentState.dedent(), 'twelve')
+  tap.same(indentState.dedent(), 'twelve')
+  test.end()
+})
