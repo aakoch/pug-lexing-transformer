@@ -1,6 +1,6 @@
 import { } from '@aakoch/utils'
 import debugFunc from 'debug'
-const debug = debugFunc('pug-lexing-transformer: indentState')
+const debug = debugFunc('pug-lexing-transformer:indentState')
 
 class IndentState {
   #currentIndent = 0
@@ -14,7 +14,9 @@ class IndentState {
       debug('incrementing stateIndent (before):', this.#stateIndent)
       this.#stateIndent = this.#stateIndent + 1
     }
-    this.#stateStack.push(this.#newState)
+    if (this.#newState != undefined && this.#newState != null && this.#newState.length > 0) {
+      this.#stateStack.push(this.#newState)
+    }
   }
   dedent() {
     debug('entering dedent:', this.#stateStack.peek())
@@ -31,7 +33,9 @@ class IndentState {
   }
   setNewState(newState) {
     debug('entering setNewState:', newState)
-    this.#newState = newState
+    if (newState != undefined && newState != null && newState.length > 0) {
+      this.#newState = newState
+    }
   }
   /** indentation of the current state */
   get stateIndent() {
@@ -42,6 +46,27 @@ class IndentState {
   get currentIndent() {
     debug('entering currentIndent:', this.#currentIndent)
     return this.#currentIndent
+  }
+  get currentState() {
+    debug('entering currentState:', this.#stateStack.peek())
+    return this.#stateStack.peek()
+  }
+  get state() {
+    debug('entering state:', this.#stateStack)
+    return this.#stateStack
+  }
+  get length() {
+    debug('entering length:', this.#stateStack.length)
+    return this.#stateStack.length
+  }
+  pop() {
+    return this.#stateStack.pop()
+  }
+  peek() {
+    return this.#stateStack.peek()
+  }
+  push(state) {
+    return this.#stateStack.push(state)
   }
   // get state() {
   //   return { 'stateIndent': this.#stateIndent,
