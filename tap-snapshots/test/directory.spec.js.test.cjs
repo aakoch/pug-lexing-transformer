@@ -5,6 +5,16 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
+exports[`test/directory.spec.js TAP test directory testing file=adam.pug > File /Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/adam.pug did not match snapshot 1`] = `
+[ 
+{"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/adam.pug","name":"html","type":"tag","lineNumber": 1, "children":[ 
+  {"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/adam.pug","type":"unbuf_code","val":"var i = 1","lineNumber": 2},  
+  {"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/adam.pug","type":"unbuf_code","val":"var j = 2","lineNumber": 3},  
+  {"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/adam.pug","name":"p","type":"tag","assignment":true,"assignment_val":"i","lineNumber": 4}] 
+},  
+{"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/adam.pug","name":"body","type":"tag","lineNumber": 5}]
+`
+
 exports[`test/directory.spec.js TAP test directory testing file=attr-es2015.pug > File /Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/attr-es2015.pug did not match snapshot 1`] = `
 [ 
 {"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/attr-es2015.pug","type":"unbuf_code","val":"var avatar = '219b77f9d21de75e81851b6b886057c7'","lineNumber": 1},  

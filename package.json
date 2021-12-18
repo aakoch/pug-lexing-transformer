@@ -4,7 +4,7 @@
   "description": "Parses Pug taking the output from the indent-transformer and running through pug-line-lexer",
   "main": "dist/index.js",
   "scripts": {
-    "build": "mkdir -p dist && cp src/index.js dist/",
+    "build": "mkdir -p dist && cp src/index.js src/indentState.js src/fooDogIndentState.js dist/",
     "test": "tap",
     "snap": "tap"
   },
@@ -13,7 +13,10 @@
     "transformer",
     "lexer",
     "parser",
-    "pug"
+    "pug",
+    "foo-dog",
+    "foodog",
+    "foo dog"
   ],
   "author": "Adam Koch (aakoch)",
   "license": "MIT",

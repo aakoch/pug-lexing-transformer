@@ -10,6 +10,42 @@ class FooDogIndentState extends IndentState {
   setNewState(newState) {
     super.setNewState(newState.endsWith('_START') ? newState.substring(0, newState.indexOf('_START')) : newState)
   }
+  indent() {
+    debug('entering indent:', super.currentState)
+    if (super.currentState === 'UNBUF_CODE_BLOCK') {
+      super.setNewState('INITIAL')
+    }
+    else if (super.currentState === 'UNBUF_CODE') {
+      super.setNewState('INITIAL')
+      return super.indentState()
+    }
+    return super.indent()
+  }
+  nodent() {
+    debug('entering nodent:', super.currentState)
+    if (super.currentState === 'UNBUF_CODE') {
+      super.push('INITIAL')
+    }
+    // else if (super.currentState === 'UNBUF_CODE') {
+
+    // }
+    return super.nodent()
+  }
+  dedent() {
+    debug('entering dedent:', super.currentState)
+
+    const prevState = super.dedent()
+
+    debug('dedent(): super.peek()=', super.peek())
+    if (super.peek() === 'UNBUF_CODE') {
+      debug('dedent() again')
+      super.dedent()
+    }
+    // else if (super.currentState === 'UNBUF_CODE') {
+
+    // }
+    return prevState
+  }
 }
 
 export default FooDogIndentState
