@@ -1,7 +1,7 @@
 import tap from 'tap'
 import fs from 'fs'
 import { testSnapshot } from './fixture.js'
-import { exists, parseArguments, simpleProjectRootDir } from '@aakoch/utils'
+import { exists, parseArguments, simpleProjectRootDir } from '@foo-dog/utils'
 
 tap.test('test directory', test => {
   const files = fs.readdirSync(simpleProjectRootDir() + '/test/pug/', {encoding: 'utf-8'}).filter(val => val.endsWith('.pug'))

@@ -11,7 +11,7 @@ import chalk from 'chalk';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 import { inspect } from 'util';
-import { exists, parseArguments } from '@aakoch/utils'
+import { exists, parseArguments } from '@foo-dog/utils'
 
 
 function printUsage() {

@@ -12,7 +12,7 @@ import chalk from 'chalk';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 import { inspect } from 'util';
-import { exists, parseArguments, simpleProjectRootDir } from '@aakoch/utils'
+import { exists, parseArguments, simpleProjectRootDir } from '@foo-dog/utils'
 import concat from 'concat-stream'
 
 function testString(input, expected, test) {

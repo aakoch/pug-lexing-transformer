@@ -1,4 +1,4 @@
-import {} from '@aakoch/utils'
+import {} from '@foo-dog/utils'
 import IndentState from './indentState.js'
 import debugFunc from 'debug'
 const debug = debugFunc('pug-lexing-transformer: fooDogIndentState')

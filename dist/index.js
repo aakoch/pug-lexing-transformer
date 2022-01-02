@@ -1,6 +1,6 @@
 import stream from 'stream'
 import path from 'path';
-import { parser, inlineParser } from 'pug-line-lexer'
+import { Parser, InlineParser } from 'pug-line-lexer'
 import debugFunc from 'debug'
 import { inspect } from 'util';
 const debug = debugFunc('pug-lexing-transformer')
@@ -9,7 +9,7 @@ const transformerDebug = debugFunc('pug-lexing-transformer')
 import { Worker } from 'worker_threads';
 import fs from 'fs';
 import chalk from 'chalk';
-import { exists, isSupportedFileExtension } from '@aakoch/utils'
+import { exists, isSupportedFileExtension } from '@foo-dog/utils'
 import FooDogIndentState from './fooDogIndentState.js'
 
 class LexingTransformer extends stream.Transform {
