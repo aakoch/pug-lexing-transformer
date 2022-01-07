@@ -24,7 +24,7 @@ class IndentState {
     this.#stateStack.push(this.#newState)
   }
   dedent() {
-    debug('entering dedent:', this.#stateStack.peek())
+    debug('entering dedent:', this.#stateStack)
     this.#currentIndent = Math.max(this.#currentIndent - 1, 0)
     if (this.#stateStack.length === 1 || (this.#stateStack.length > 1 && this.#stateStack[this.#stateStack.length - 1] !== this.#stateStack[this.#stateStack.length - 2])) {
       debug('decrementing stateIndent (before):', this.#stateIndent)
@@ -68,12 +68,15 @@ class IndentState {
     return this.#stateStack.length
   }
   pop() {
+    debug('entering pop')
     return this.#stateStack.pop()
   }
   peek() {
+    debug('entering peek:', this.#stateStack.peek())
     return this.#stateStack.peek()
   }
   push(state) {
+    debug('entering push:', state)
     return this.#stateStack.push(state)
   }
   // get state() {

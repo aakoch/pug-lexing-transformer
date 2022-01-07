@@ -6,11 +6,11 @@ class IndentState {
   #currentIndent = 0
   #stateIndent = 0
   #stateStack = []
-  #newState = null
+  #newState = 'INITIAL'
   indent() {
     debug('entering indent:', this.#newState)
     this.#currentIndent++
-    if (this.#stateStack.length === 0 || this.#stateStack.peek() != this.#newState) {
+    if (this.#newState == undefined || this.#stateStack.length === 0 || this.#stateStack.peek() != this.#newState) {
       debug('incrementing stateIndent (before):', this.#stateIndent)
       this.#stateIndent = this.#stateIndent + 1
     }
@@ -19,16 +19,19 @@ class IndentState {
     }
   }
   indentState() {
-    debug('entering indentState:', this.#newState)
+    debug('pushing ' + this.#newState + ' to state stack and incrementing currentIndent but not stateIndent')
     this.#currentIndent++
     this.#stateStack.push(this.#newState)
   }
   dedent() {
-    debug('entering dedent:', this.#stateStack.peek())
+    debug('entering dedent:', this.#stateStack)
     this.#currentIndent = Math.max(this.#currentIndent - 1, 0)
+    debug('dedent(): decremented currentIndent so now it=' + this.#currentIndent)
+    debug('dedent(): this.#stateIndent=' + this.#stateIndent)
     if (this.#stateStack.length === 1 || (this.#stateStack.length > 1 && this.#stateStack[this.#stateStack.length - 1] !== this.#stateStack[this.#stateStack.length - 2])) {
-      debug('decrementing stateIndent (before):', this.#stateIndent)
+      debug('decrementing stateIndent for', this.#stateStack[this.#stateStack.length - 1], ' (before):', this.#stateIndent)
       this.#stateIndent = Math.max(this.#stateIndent - 1, 0)
+      debug('decrementing stateIndent (after):', this.#stateIndent)
     }
     else if (this.#stateStack.length === 0) {
       this.#stateIndent = 0
@@ -47,16 +50,13 @@ class IndentState {
   }
   /** indentation of the current state */
   get stateIndent() {
-    debug('entering stateIndent:', this.#stateIndent)
     return this.#stateIndent
   }
   /** "absolute"? indentation */
   get currentIndent() {
-    debug('entering currentIndent:', this.#currentIndent)
     return this.#currentIndent
   }
   get currentState() {
-    debug('entering currentState:', this.#stateStack.peek())
     return this.#stateStack.peek()
   }
   get state() {
@@ -68,12 +68,11 @@ class IndentState {
     return this.#stateStack.length
   }
   pop() {
+    debug('entering pop')
     return this.#stateStack.pop()
   }
-  peek() {
-    return this.#stateStack.peek()
-  }
   push(state) {
+    debug('entering push:', state)
     return this.#stateStack.push(state)
   }
   // get state() {
