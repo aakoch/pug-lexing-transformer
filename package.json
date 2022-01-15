@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "mkdir -p dist && cp src/index.js src/indentState.js src/fooDogIndentState.js dist/",
-    "test": "tap",
+    "test": "npm run build && tap",
     "snap": "tap"
   },
   "keywords": [
@@ -21,7 +21,7 @@
   "author": "Adam Koch (aakoch)",
   "license": "MIT",
   "dependencies": {
-    "@foo-dog/utils": "^0.2.1",
+    "@foo-dog/utils": "^0.2.2",
     "@jaredpalmer/wrapline": "^2.0.2",
     "chai-equal-for-long-text": "^0.2.1",
     "chalk": "^4.1.2",

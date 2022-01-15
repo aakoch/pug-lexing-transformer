@@ -1,0 +1,52 @@
+import tap from 'tap'
+import IndentState from '../src/indentState.js'
+
+tap.test('Instantiation works', test => {
+  const indentState = new IndentState()
+  tap.ok(indentState)
+  test.end()
+})
+
+tap.test('Start with "PERSISTENT STATE" in stack, nothing on deck and no current state', subtest => {
+  const setup = function (test) {
+    const indentState = new IndentState()
+    indentState.push('PERSISTENT STATE')
+    test.same(indentState.currentIndent, 0)
+    test.same(indentState.stack, ['PERSISTENT STATE'])
+    test.same(indentState.onDeck, undefined)
+    test.same(indentState.current, undefined)
+    return indentState
+  }
+
+  const promise1 = subtest.test('then indent', {todo:true}, test => {
+    const indentState = setup(test)
+    indentState.indent();
+    test.same(indentState.currentIndent, 1)
+    test.same(indentState.stack, ['PERSISTENT STATE'])
+    test.same(indentState.onDeck, undefined)
+    // test.same(indentState.current, 'PERSISTENT STATE')
+    test.end()
+  })
+  
+  const promise2 = subtest.test('then nodent', test => {
+    const indentState = setup(test)
+    indentState.nodent();
+    test.same(indentState.currentIndent, 0)
+    test.same(indentState.stack, ['PERSISTENT STATE'])
+    test.same(indentState.onDeck, undefined)
+    test.same(indentState.current, undefined)
+    test.end()
+  })
+
+  const promise3 = subtest.test('then dedent', test => {
+    const indentState = setup(test)
+    indentState.dedent();
+    test.same(indentState.currentIndent, 0)
+    test.same(indentState.stack, [])
+    test.same(indentState.onDeck, undefined)
+    test.same(indentState.current, undefined)
+    test.end()
+  })
+
+  Promise.all([promise1, promise2, promise3]).then(subtest.end)
+})

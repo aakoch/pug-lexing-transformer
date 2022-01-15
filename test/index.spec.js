@@ -101,22 +101,22 @@ tap.test('test1', test => {
     .pipe(concat({ encoding: 'string' }, body => {
       debug('body=', body)
       test.ok(body)
-      test.same(JSON.parse(body), [{"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test","name":"html","type":"tag","lineNumber": 1}])
+      test.same(JSON.parse(body), [{"source":"test","name":"html","type":"tag","lineNumber": 1}])
       test.end()
     }));
 })
 
 tap.test('test method testString', test => {
-  testString('html', [{"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test","name":"html","type":"tag","lineNumber": 1}], test)
+  testString('html', [{"source":"test","name":"html","type":"tag","lineNumber": 1}], test)
 })
 
 tap.test('test basic file', test => {
   const fullPath = simpleProjectRootDir() + '/test/pug/basic.pug'
   testFile(fullPath, (
       [
-        {"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/basic.pug","name":"html","type":"tag","lineNumber": 1, "children":[
-        {"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/basic.pug","name":"body","type":"tag","lineNumber": 2, "children":[
-        {"source":"/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/basic.pug","name":"h1","type":"tag","val":"Title","lineNumber": 3}]}]}
+        {"source":"test/pug/basic.pug","name":"html","type":"tag","lineNumber": 1, "children":[
+        {"source":"test/pug/basic.pug","name":"body","type":"tag","lineNumber": 2, "children":[
+        {"source":"test/pug/basic.pug","name":"h1","type":"tag","val":"Title","lineNumber": 3}]}]}
       ]
     ), test)
 })
@@ -135,26 +135,57 @@ tap.test('script whitespace', t => {
     bar();
     
   }`, [{
-    "source": "/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test",
+    "source": "test",
     "name": "script",
     "type": "tag",
     "lineNumber": 1,
     "children": [{
-      "source": "/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test",
+      "source": "test",
       "type": "text",
       "val": "if (foo) {",
       "lineNumber": 2,
       "children": [{
-        "source": "/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test",
+        "source": "test",
         "type": "text",
         "val": "bar();",
         "lineNumber": 4,
       }],
     }, {
-      "source": "/Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test",
+      "source": "test",
       "type": "block_end",
       "lineNumber": 6,
     }],
   }], t)
 
+})
+
+tap.test('test block with code', t => {
+  testString(`
+-
+  string = item.charAt(0)
+  
+    .toUpperCase()
+    `, [
+         {
+          "source": "test",
+          "type": "unbuf_code_block",
+          "lineNumber": 2,
+          "children":  [
+             {
+              "source": "test",
+              "type": "unbuf_code",
+              "val": "string = item.charAt(0)",
+              "lineNumber": 3,
+              "children":  [
+                 {
+                  "source": "test",
+                  "type": "unbuf_code",
+                  "val": ".toUpperCase()",
+                  "lineNumber": 5,
+                },
+              ],
+            },
+          ],
+        },
+    ], t)
 })

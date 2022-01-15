@@ -9,154 +9,154 @@ tap.test('Instantiation works', test => {
 
 tap.test('Calling setNewState() without indent() later will return undefined from dedent()', test => {
   const indentState = new IndentState()
-  indentState.setNewState('one')
-  tap.same(indentState.dedent(), undefined)
+  indentState.onDeck = 'one'
+  test.same(indentState.dedent(), undefined)
   test.end()
 })
 
 tap.test('Calling setNewState() with indent() later will return the correct value from dedent()', test => {
   const indentState = new IndentState()
-  indentState.setNewState('two')
+  indentState.onDeck = 'two'
   indentState.indent()
-  tap.same(indentState.dedent(), 'two')
+  test.same(indentState.dedent(), 'two')
   test.end()
 })
 
 tap.test('Calling nodent() returns the last state added', test => {
   const indentState = new IndentState()
-  indentState.setNewState('three')
+  indentState.onDeck = 'three'
   indentState.indent()
-  tap.same(indentState.nodent(), 'three')
-  indentState.setNewState('four')
+  test.same(indentState.nodent(), 'three')
+  indentState.onDeck = 'four'
   test.end()
 })
 
 tap.test('Calling nodent() returns the last state added', test => {
   const indentState = new IndentState()
-  indentState.setNewState('three')
+  indentState.onDeck = 'three'
   indentState.indent()
-  tap.same(indentState.nodent(), 'three')
+  test.same(indentState.nodent(), 'three')
   test.end()
 })
 
 tap.test('Calling setNewState() without indent() later will return previous state', test => {
   const indentState = new IndentState()
-  indentState.setNewState('three')
+  indentState.onDeck = 'three'
   indentState.indent()
-  tap.same(indentState.nodent(), 'three')
-  indentState.setNewState('four')
-  tap.same(indentState.nodent(), 'three')
+  test.same(indentState.nodent(), 'three')
+  indentState.onDeck = 'four'
+  test.same(indentState.nodent(), 'three')
   test.end()
 })
 
 tap.test('Calling dedent() with nothing on stack returns undefined', test => {
   const indentState = new IndentState()
-  indentState.setNewState('six')
+  indentState.onDeck = 'six'
   indentState.indent()
-  tap.same(indentState.dedent(), 'six')
-  tap.same(indentState.dedent(), undefined)
+  test.same(indentState.dedent(), 'six')
+  test.same(indentState.dedent(), undefined)
   test.end()
 })
 
 tap.test('Calling indent() twice should push current state on stack again', test => {
   const indentState = new IndentState()
-  indentState.setNewState('seven')
+  indentState.onDeck = 'seven'
   indentState.indent()
   indentState.indent()
-  tap.same(indentState.dedent(), 'seven')
-  tap.same(indentState.dedent(), 'seven')
+  test.same(indentState.dedent(), 'seven')
+  test.same(indentState.dedent(), 'seven')
   test.end()
 })
 
 tap.test('Setting the state should increment the indent count', test => {
   const indentState = new IndentState()
-  tap.same(indentState.stateIndent, 0)
-  tap.same(indentState.currentIndent, 0)
-  indentState.setNewState('eight')
+  test.same(indentState.stateIndent, 0)
+  test.same(indentState.currentIndent, 0)
+  indentState.onDeck = 'eight'
   indentState.indent()
-  tap.same(indentState.stateIndent, 1)
-  tap.same(indentState.currentIndent, 1)
+  test.same(indentState.stateIndent, 1)
+  test.same(indentState.currentIndent, 1)
   test.end()
 })
 
 tap.test('Dedenting the state should decrement the indent count', test => {
   const indentState = new IndentState()
-  tap.same(indentState.stateIndent, 0)
-  tap.same(indentState.currentIndent, 0)
-  indentState.setNewState('eight')
+  test.same(indentState.stateIndent, 0)
+  test.same(indentState.currentIndent, 0)
+  indentState.onDeck = 'eight'
   indentState.indent()
-  tap.same(indentState.stateIndent, 1)
-  tap.same(indentState.currentIndent, 1)
+  test.same(indentState.stateIndent, 1)
+  test.same(indentState.currentIndent, 1)
   indentState.dedent()
-  tap.same(indentState.stateIndent, 0)
-  tap.same(indentState.currentIndent, 0)
+  test.same(indentState.stateIndent, 0)
+  test.same(indentState.currentIndent, 0)
   test.end()
 })
 
 tap.test('Setting the same state should NOT increment the state indent count', test => {
   const indentState = new IndentState()
-  tap.same(indentState.stateIndent, 0)
-  tap.same(indentState.currentIndent, 0)
-  indentState.setNewState('eight')
+  test.same(indentState.stateIndent, 0)
+  test.same(indentState.currentIndent, 0)
+  indentState.onDeck = 'eight'
   indentState.indent()
-  tap.same(indentState.stateIndent, 1)
-  tap.same(indentState.currentIndent, 1)
-  indentState.setNewState('eight')
+  test.same(indentState.stateIndent, 1)
+  test.same(indentState.currentIndent, 1)
+  indentState.onDeck = 'eight'
   indentState.indent()
-  tap.same(indentState.stateIndent, 1)
-  tap.same(indentState.currentIndent, 2)
+  test.same(indentState.stateIndent, 1)
+  test.same(indentState.currentIndent, 2)
   test.end()
 })
 
 tap.test('Calling indent again should NOT increment the state indent count', test => {
   const indentState = new IndentState()
-  tap.same(indentState.stateIndent, 0)
-  tap.same(indentState.currentIndent, 0)
-  indentState.setNewState('eight')
+  test.same(indentState.stateIndent, 0)
+  test.same(indentState.currentIndent, 0)
+  indentState.onDeck = 'eight'
   indentState.indent()
-  tap.same(indentState.stateIndent, 1)
-  tap.same(indentState.currentIndent, 1)
+  test.same(indentState.stateIndent, 1)
+  test.same(indentState.currentIndent, 1)
   indentState.indent()
-  tap.same(indentState.stateIndent, 1)
-  tap.same(indentState.currentIndent, 2)
+  test.same(indentState.stateIndent, 1)
+  test.same(indentState.currentIndent, 2)
   indentState.indent()
-  tap.same(indentState.stateIndent, 1)
-  tap.same(indentState.currentIndent, 3)
+  test.same(indentState.stateIndent, 1)
+  test.same(indentState.currentIndent, 3)
   test.end()
 })
 
 tap.test('Dedenting the same state should NOT decrement the state indent count', test => {
   const indentState = new IndentState()
   let cnt = 0
-  tap.same(indentState.stateIndent, 0)
-  tap.same(indentState.currentIndent, 0)
-  indentState.setNewState('ten')
+  test.same(indentState.stateIndent, 0)
+  test.same(indentState.currentIndent, 0)
+  indentState.onDeck = 'ten'
 
   indentState.indent()
 
-  tap.same(indentState.stateIndent, 1)
-  tap.same(indentState.currentIndent, 1)
-  indentState.setNewState('eleven')
+  test.same(indentState.stateIndent, 1)
+  test.same(indentState.currentIndent, 1)
+  indentState.onDeck = 'eleven'
   
   indentState.indent()
 
-  tap.same(indentState.stateIndent, 2)
-  tap.same(indentState.currentIndent, 2)
+  test.same(indentState.stateIndent, 2)
+  test.same(indentState.currentIndent, 2)
   indentState.indent()
 
-  tap.same(indentState.stateIndent, 2)
-  tap.same(indentState.currentIndent, 3)
+  test.same(indentState.stateIndent, 2)
+  test.same(indentState.currentIndent, 3)
   indentState.dedent()
 
-  tap.same(indentState.stateIndent, 2)
-  tap.same(indentState.currentIndent, 2)
+  test.same(indentState.stateIndent, 2)
+  test.same(indentState.currentIndent, 2)
   indentState.dedent()
 
-  tap.same(indentState.stateIndent, 1)
-  tap.same(indentState.currentIndent, 1)
+  test.same(indentState.stateIndent, 1)
+  test.same(indentState.currentIndent, 1)
   indentState.dedent()
-  tap.same(indentState.stateIndent, 0)
-  tap.same(indentState.currentIndent, 0)
+  test.same(indentState.stateIndent, 0)
+  test.same(indentState.currentIndent, 0)
 
   test.end()
 })
@@ -164,11 +164,143 @@ tap.test('Dedenting the same state should NOT decrement the state indent count',
 
 tap.test('Calling indent() with null state uses previous state', test => {
   const indentState = new IndentState()
-  indentState.setNewState('twelve')
+  indentState.onDeck = 'twelve'
   indentState.indent()
-  indentState.setNewState(null)
+  indentState.onDeck = null
   indentState.indent()
-  tap.same(indentState.dedent(), 'twelve')
-  tap.same(indentState.dedent(), 'twelve')
+  test.same(indentState.dedent(), 'twelve')
+  test.same(indentState.dedent(), 'twelve')
   test.end()
 })
+
+//<ONE>
+//  <ONE>
+//    <ONE>
+//  <ONE>
+//<ONE>
+
+//<ONE>
+//  <undefined>
+//    <ONE>
+//  <ONE>
+//<ONE>
+
+
+tap.test('Indenting with undefined should act as if we are in the same state', test => {
+  const indentState = new IndentState()
+  let cnt = 0
+  test.same(indentState.stateIndent, 0)
+  test.same(indentState.currentIndent, 0)
+  indentState.onDeck = 'ten'
+
+  indentState.indent()
+
+  test.same(indentState.stateIndent, 1)
+  test.same(indentState.currentIndent, 1)
+  indentState.onDeck = undefined
+  
+  indentState.indent()
+
+  test.same(indentState.stateIndent, 1)
+  test.same(indentState.currentIndent, 2)
+
+  indentState.onDeck = 'ten'
+
+  indentState.indent()
+
+  test.same(indentState.stateIndent, 1)
+  test.same(indentState.currentIndent, 3)
+
+  indentState.onDeck = 'eleven'
+  indentState.indent()
+
+  test.same(indentState.stateIndent, 1)
+  test.same(indentState.currentIndent, 3)
+  indentState.dedent()
+
+  test.same(indentState.stateIndent, 1)
+  test.same(indentState.currentIndent, 2)
+  indentState.dedent()
+
+  test.same(indentState.stateIndent, 1)
+  test.same(indentState.currentIndent, 1)
+  indentState.dedent()
+  test.same(indentState.stateIndent, 0)
+  test.same(indentState.currentIndent, 0)
+
+  test.end()
+})
+
+
+// tap.test('Nodenting with undefined should ???', test => {
+//   const indentState = new IndentState()
+//   let cnt = 0
+//   test.same(indentState.stateIndent, 0)
+//   test.same(indentState.currentIndent, 0)
+//   indentState.onDeck = 'ten'
+
+//   indentState.indent()
+
+//   test.same(indentState.stateIndent, 1)
+//   test.same(indentState.currentIndent, 1)
+//   indentState.onDeck = 'eleven'
+  
+//   indentState.indent()
+
+//   test.same(indentState.stateIndent, 2)
+//   test.same(indentState.currentIndent, 2)
+//   indentState.indent()
+
+//   test.same(indentState.stateIndent, 2)
+//   test.same(indentState.currentIndent, 3)
+//   indentState.dedent()
+
+//   test.same(indentState.stateIndent, 2)
+//   test.same(indentState.currentIndent, 2)
+//   indentState.dedent()
+
+//   test.same(indentState.stateIndent, 1)
+//   test.same(indentState.currentIndent, 1)
+//   indentState.dedent()
+//   test.same(indentState.stateIndent, 0)
+//   test.same(indentState.currentIndent, 0)
+
+//   test.end()
+// })
+
+
+// tap.test('Dedenting with undefined should ???', test => {
+//   const indentState = new IndentState()
+//   let cnt = 0
+//   test.same(indentState.stateIndent, 0)
+//   test.same(indentState.currentIndent, 0)
+//   indentState.onDeck = 'ten'
+
+//   indentState.indent()
+
+//   test.same(indentState.stateIndent, 1)
+//   test.same(indentState.currentIndent, 1)
+//   indentState.onDeck = undefined
+  
+//   indentState.indent()
+
+//   test.same(indentState.stateIndent, 2)
+//   test.same(indentState.currentIndent, 2)
+//   indentState.indent()
+
+//   test.same(indentState.stateIndent, 2)
+//   test.same(indentState.currentIndent, 3)
+//   indentState.dedent()
+
+//   test.same(indentState.stateIndent, 2)
+//   test.same(indentState.currentIndent, 2)
+//   indentState.dedent()
+
+//   test.same(indentState.stateIndent, 1)
+//   test.same(indentState.currentIndent, 1)
+//   indentState.dedent()
+//   test.same(indentState.stateIndent, 0)
+//   test.same(indentState.currentIndent, 0)
+
+//   test.end()
+// })

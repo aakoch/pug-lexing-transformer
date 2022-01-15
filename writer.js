@@ -5,7 +5,7 @@ const debug = debugFunc('writer')
 import commandLineUsage from 'command-line-usage'
 import commandLineArgs from 'command-line-args'
 import chalk from 'chalk'
-import { exists, parseArguments } from '@aakoch/utils'
+import { exists, parseArguments } from '@foo-dog/utils'
 import { fileURLToPath } from 'url';
 const filename = fileURLToPath(import.meta.url);
 

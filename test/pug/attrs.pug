@@ -22,22 +22,22 @@ input(pattern='\\S+')
 foo(terse="true")
 foo(date=new Date(0))
 
-foo(abc
-   ,def)
-foo(abc,
-    def)
-foo(abc,
-		def)
-foo(abc
-		,def)
-foo(abc
-		def)
-foo(abc
-    def)
+//- foo(abc
+//-    ,def)
+//- foo(abc,
+//-     def)
+//- foo(abc,
+//- 		def)
+//- foo(abc
+//- 		,def)
+//- foo(abc
+//- 		def)
+//- foo(abc
+//-     def)
 
 - var attrs = {foo: 'bar', bar: '<baz>'}
 
 div&attributes(attrs)
 
 a(foo='foo' "bar"="bar")
-a(foo='foo' 'bar'='bar')
+//- a(foo='foo' bar='bar')

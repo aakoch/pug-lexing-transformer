@@ -37,7 +37,7 @@ class LexingTransformer extends stream.Transform {
   }
   lineNo = 0
   buffer = []
-  useAbsolutePath = true
+  useAbsolutePath = false
   filesToAlsoParse = []
   override
   state = new FooDogIndentState()
@@ -150,18 +150,18 @@ class LexingTransformer extends stream.Transform {
       this.currentIndent++;
 
       
-      // if (this.state.peek() == 'TEXT_START') {
+      // if (this.state.current == 'TEXT_START') {
       //   this.state.pop();
       //   this.state.push('TEXT');
       // }
-      // else if (this.state.peek() == 'TEXT') {
+      // else if (this.state.current == 'TEXT') {
       //   this.state.push('TEXT');
       // }
-      // else if (this.state.peek() == 'CODE_START') {
+      // else if (this.state.current == 'CODE_START') {
       //   this.state.pop();
       //   this.state.push('UNBUF_CODE');
       // }
-      // else if (this.state.peek() == 'UNBUF_CODE') {
+      // else if (this.state.current == 'UNBUF_CODE') {
       //   this.state.push('UNBUF_CODE');
       // }
     }
@@ -195,20 +195,20 @@ class LexingTransformer extends stream.Transform {
         ret.push(this.stack.pop().symbol + ', ');
       }
 
-      // if (this.state.peek()?.endsWith('_START')) {
+      // if (this.state.current?.endsWith('_START')) {
       //   this.state.pop();
       // }
     }
   }
-
   parseLineAndCreateString(matches, ret) {
     const text = matches.groups.text;
     // transformerDebug(text);
     if (text.trim().length > 0) {
-      transformerDebug('before state=', this.state.state, ', length=', this.state.length, ', typeof=', typeof this.state.currentState);
+      transformerDebug('before state=', this.state.current, ', length=', this.state.length, ', typeof=', typeof this.state.current)
       let newObj
-      if (!!this.state.state.length) {
-        newObj = this.analyzeLine('<' + this.state.pop() + '>' + text);
+      let currentState = this.state.current
+      if (!!currentState) {
+        newObj = this.analyzeLine('<' + currentState + '>' + text);
       }
       else {
         newObj = this.analyzeLine(text);
@@ -218,26 +218,30 @@ class LexingTransformer extends stream.Transform {
       let nestedChildren = '';
       if (newObj.hasOwnProperty('state')) {
         transformerDebug('returned state=', newObj.state);
-        this.state.setNewState(newObj.state)
+        this.state.onDeck = newObj.state
 
         if (newObj.state == 'NESTED') {
           if (newObj.children[0].hasOwnProperty('state')) {
             // this.state.push(newObj.children[0].state);
-            this.state.setNewState(newObj.children[0].state)
+            this.state.onDeck = newObj.children[0].state
           }
           const childrenStr = JSON.stringify(newObj.children[0]);
           transformerDebug('childrenStr=' + childrenStr);
           delete newObj.children;
           nestedChildren = ', "children":[' + childrenStr + ']';
         }
-        else if (this.state.peek() == 'MULTI_LINE_ATTRS' && newObj.state == 'MULTI_LINE_ATTRS') {
+        else if (this.state.current == 'MULTI_LINE_ATTRS' && newObj.state == 'MULTI_LINE_ATTRS') {
           // this.state.pop();
         }
-        else if (this.state.peek() == 'MULTI_LINE_ATTRS' && !newObj.hasOwnProperty('state')) {
+        else if (this.state.current == 'MULTI_LINE_ATTRS' && !newObj.hasOwnProperty('state')) {
           this.state.pop();
         }
+        // else if (newObj.state == 'KEYWORD_BODY_START' && isPersistent(newObj.type)) {
+        //   this.state.onDeck = undefined
+        // }
         else {
-          this.state.push(newObj.state);
+          // this.state.push(newObj.state);
+          this.state.onDeck = newObj.state
         }
       }
       else {

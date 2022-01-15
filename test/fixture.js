@@ -30,7 +30,13 @@ function testString(input, expected, test) {
     .pipe(concat({ encoding: 'string' }, body => {
       debug('body=', body)
       test.ok(body)
+      try {
       test.same(JSON.parse(body), expected)
+      }
+      catch (e) {
+        console.error(e.message)
+        console.error(body)
+      }
       test.end()
     }));
 }
