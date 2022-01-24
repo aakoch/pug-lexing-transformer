@@ -2,3 +2,4 @@ node_modules
 temp.json
 .nyc_output
 build
+.DS_Store
