@@ -10,7 +10,7 @@ import { Worker } from 'worker_threads';
 import fs from 'fs';
 import chalk from 'chalk';
 import { exists, isSupportedFileExtension } from '@foo-dog/utils'
-import FooDogIndentState from './fooDogIndentState.js'
+import IndentState from './FooDogIndentState.js'
 const parser = Parser
 // const inlineParser = InlineParser.parser
 
@@ -40,7 +40,8 @@ class LexingTransformer extends stream.Transform {
   useAbsolutePath = false
   filesToAlsoParse = []
   override
-  state = new FooDogIndentState()
+  state = new IndentState()
+  #currentState = ''
 
   constructor(options) {
     super({ decodeStrings: true, encoding: 'utf-8' })
@@ -81,19 +82,24 @@ class LexingTransformer extends stream.Transform {
       str = str.toString()
     }
     if (typeof str === 'string') {
-      transformerDebug('str=', str)
+      // transformerDebug('str=', str)
       try {
         const lines = str.split('\n')
-        transformerDebug('lines=', lines)
+        // transformerDebug('lines=', lines)
         lines.filter(line => line.length).forEach(line => {
           this.push(this.processLine.call(this, line))
         })
         callback();
       }
-      catch (e) {
-        console.error("ERROR ".repeat(100))
-        console.error(e)
-        callback(new Error('Error parsing line number ' + this.lineNo + ' of ' + this.filename + ': ' + str.replace(/(IN|NO|DE)\d+ /, '') + '\nCause: ' + e.message, { cause: e }, null, (this != undefined ? this.lineNo : 'unknown')));
+      catch (err) {
+        let e
+        if (err.name === 'JisonParserError') {
+          e = new Error('Unexpected system error. Please report to the developer: ' + err.message)
+        }
+        else {
+          e = new LexingError('Error parsing ' + this.filename + ': ' + err.message.replace('line 1', 'line ' + this.lineNo + ''), { cause: err }, null, (this != undefined ? this.lineNo : 'unknown'))
+        }
+        callback(e)
       }
     }
     else {
@@ -116,7 +122,7 @@ class LexingTransformer extends stream.Transform {
 
     const regex = /(?<INDENT>IN)?(?<DEDENT>DE)?(?<NODENT>NO)?(?<LINENO>\d+) (?<text>.*)/
     const matches = inputString.match(regex)
-    transformerDebug('matches=', matches)
+    // transformerDebug('matches=', matches)
 
     if (matches && matches.groups) {
       // transformerDebug('matches.groups=', matches.groups)
@@ -128,20 +134,21 @@ class LexingTransformer extends stream.Transform {
       this.parseLineAndCreateString(matches, ret);
     }
     else {
-      throw new Error('Malformed string: ' + inputString.substring(0, 120))
+      throw new LexingError('Malformed string: ' + inputString.substring(0, 120))
       // ret.push(inputString)
     }
     let retString = ret.join(' \n')
     if (typeof retString != 'string') {
       error('lexingTransformer', typeof retString)
     }
-    transformerDebug('retString=' + retString)
+    // transformerDebug('retString=' + retString)
     return retString
   }
 
   handleDents(matches, ret) {
     if (matches.groups.INDENT) {
-      this.state.indent()
+
+      this.#currentState = this.state.indent(this.#currentState)
 
       ret.push(', "children":[');
       this.stack.push({ obj: 'children', symbol: ']' });
@@ -166,7 +173,7 @@ class LexingTransformer extends stream.Transform {
       // }
     }
     else if (matches.groups.DEDENT) {
-      this.state.dedent()
+      this.#currentState = this.state.dedent()
 
       ret.push(this.stack.pop().symbol + this.stack.pop().symbol);
 
@@ -184,10 +191,12 @@ class LexingTransformer extends stream.Transform {
       // this.state.pop();
     }
     else {
-      this.state.nodent()
+      this.#currentState = this.state.nodent()
+      
+      transformerDebug('nodent: this.#currentState=', this.#currentState);
 
       // need to handle the very first element
-      transformerDebug('stack=', this.stack);
+      // transformerDebug('stack=', this.stack);
       if (this.stack.length == 1) {
         ret.push('[');
       }
@@ -204,48 +213,51 @@ class LexingTransformer extends stream.Transform {
     const text = matches.groups.text;
     // transformerDebug(text);
     if (text.trim().length > 0) {
-      transformerDebug('before state=', this.state.current, ', length=', this.state.length, ', typeof=', typeof this.state.current)
+      transformerDebug('before state=', this.#currentState)
       let newObj
-      let currentState = this.state.current
-      if (!!currentState) {
-        newObj = this.analyzeLine('<' + currentState + '>' + text);
+      if (!!this.#currentState) {
+        newObj = this.analyzeLine('<' + this.#currentState + '>' + text);
       }
       else {
         newObj = this.analyzeLine(text);
       }
 
-      transformerDebug('newObj=', newObj)
+      // transformerDebug('newObj=', newObj)
       let nestedChildren = '';
       if (newObj.hasOwnProperty('state')) {
         transformerDebug('returned state=', newObj.state);
-        this.state.onDeck = newObj.state
+        // this.#currentState = newObj.state
 
         if (newObj.state == 'NESTED') {
           if (newObj.children[0].hasOwnProperty('state')) {
             // this.state.push(newObj.children[0].state);
-            this.state.onDeck = newObj.children[0].state
+            this.#currentState = newObj.children[0].state
           }
           const childrenStr = JSON.stringify(newObj.children[0]);
           transformerDebug('childrenStr=' + childrenStr);
           delete newObj.children;
           nestedChildren = ', "children":[' + childrenStr + ']';
         }
-        else if (this.state.current == 'MULTI_LINE_ATTRS' && newObj.state == 'MULTI_LINE_ATTRS') {
+        else if (this.#currentState == 'MULTI_LINE_ATTRS' && newObj.state == 'MULTI_LINE_ATTRS') {
           // this.state.pop();
         }
-        else if (this.state.current == 'MULTI_LINE_ATTRS' && !newObj.hasOwnProperty('state')) {
-          this.state.pop();
+        else if (this.#currentState == 'MULTI_LINE_ATTRS' && !newObj.hasOwnProperty('state')) {
+          // this.state.pop();
         }
         // else if (newObj.state == 'KEYWORD_BODY_START' && isPersistent(newObj.type)) {
         //   this.state.onDeck = undefined
         // }
+        // else if (newObj.state.endsWith('_START')) {
+        //   // this.state.push(newObj.state);
+        //   this.#currentState = newObj.state.slice(0, -6)
+        // }
         else {
           // this.state.push(newObj.state);
-          this.state.onDeck = newObj.state
+          this.#currentState = newObj.state
         }
       }
       else {
-        this.state.pop();
+        // this.state.pop();
       }
 
       // if (newObj.hasOwnProperty('val') && newObj.val.indexOf('#[') == 0 && newObj.val.endsWith(']')) {
@@ -259,7 +271,11 @@ class LexingTransformer extends stream.Transform {
       let sourceFile = (this.override ?? (this.useAbsolutePath ? path.resolve(this.filename) : path.relative('', this.filename)))
       if (newObj.type === 'include' || newObj.type === 'extends') {
 
-        let fileToInclude = newObj.val;
+        if (!newObj.hasOwnProperty('val') && !newObj.hasOwnProperty('file')) {
+          throw new Error('No file to ' + newObj.type + '. Object=' + inspect(newObj, false, 3))
+        }
+
+        let fileToInclude = newObj.val ?? newObj.file;
 
         if (path.extname(fileToInclude) === '') {
           fileToInclude += '.pug'
@@ -303,10 +319,39 @@ class LexingTransformer extends stream.Transform {
 
   analyzeLine(el) {
     streamDebug('sending to parser: ' + el)
-    const returnedObj = parser.parse(el)
-    streamDebug('returned from parser: ', returnedObj)
-    return returnedObj
+    try {
+      const returnedObj = parser.parse(el)
+      streamDebug('returned from parser: ', returnedObj)
+      return returnedObj
+    }
+    catch (err) {
+      let e
+      if (err.name === 'JisonLexerError') {
+        console.error(err)
+        e = new LexingError(err.message.replace('line 1', 'line ' + this.lineNo), { cause: err })
+      }
+      else {
+        e = err
+      }
+      throw e
+    }
   }
 }
+
+class LexingError extends Error {
+  constructor(...params) {
+    // Pass remaining arguments (including vendor specific ones) to parent constructor
+    super(...params)
+
+    // Maintains proper stack trace for where our error was thrown (only available on V8)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, LexingError)
+    }
+
+    this.name = 'LexingError'
+    // this.date = new Date()
+  }
+}
+
 
 export default LexingTransformer

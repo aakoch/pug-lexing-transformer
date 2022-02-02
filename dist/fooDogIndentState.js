@@ -6,81 +6,61 @@ const debug = debugFunc('pug-lexing-transformer:fooDogIndentState')
 class FooDogIndentState extends IndentState {
   constructor() {
     super()
-    this.#id = Math.random()
   }
-  #id
-  // setNewState(newState) {
-  //   debug('entering setNewState:', newState)
-  //   super.setNewState(newState.endsWith('_START') ? newState.slice(0, -6) : newState)
-  // }
-  indent() {
-    if (!!super.onDeck && super.onDeck.endsWith('_START')) {
-      super.onDeck = super.onDeck.slice(0, -6)
+  #stickyState = undefined
+  indent(state) {
+    debug('indent ' + state)
+
+    if (this.#stickyState === 'TEXT') {
+      super.indent('TEXT_BLOCK')
+      this.#stickyState = 'TEXT'
+      return 'TEXT';
     }
-    // debug('entering indent for ' + super.currentState + " with indent=" + super.currentIndent + " and stateIndent=" + super.stateIndent)
-    // if (super.currentState === 'UNBUF_CODE_BLOCK_START') {
-    //   super.setNewState('UNBUF_CODE_BLOCK')
-    //   // return super.indentState()
-    // }
-    // else 
-    // if (super.currentState === 'UNBUF_CODE_FOLLOWER') {
-    //   super.setNewState('INITIAL')
-    //   // return super.indentState()
-    // }
-    // else if (super.currentState === 'MIXIN_CALL') {
-    //   super.setNewState('INITIAL')
-    //   // return super.indentState()
-    // }
-    // else if (super.currentState === 'TEXT_START' || super.currentState === 'TEXT') {
-    //   super.push('TEXT')
-    // }
-    return super.indent()
+
+    if (state === 'MULTI_LINE_ATTRS') {
+      this.#stickyState = state
+    }
+    else if (state === 'TEXT_BLOCK_START') {
+      this.#stickyState = 'TEXT'
+    }
+    else if (state === 'TEXT_START') {
+      super.indent('TEXT_BLOCK')
+      this.#stickyState = 'TEXT'
+      return 'TEXT';
+    }
+
+    return super.indent(state)
   }
   nodent() {
-    debug('entering nodent:', super.currentState)
-    if (super.currentState === 'UNBUF_CODE_FOLLOWER') {
-      super.push('INITIAL')
+    debug('nodent')
+    const tempNodent = super.nodent()
+    if (this.#stickyState === 'TEXT') {
+      return 'TEXT'
     }
-    else if (super.currentState === 'TEXT_START' || super.currentState === 'TEXT') {
-      super.push('TEXT')
+    else if (tempNodent === 'TEXT') {
+      super.dedent()
+      return undefined
     }
-    // else if (super.currentState === 'UNBUF_CODE_FOLLOWER') {
-
-    // }
-    return super.nodent()
+    return tempNodent
   }
-  // dedent() {
-    // const currentState = super.currentState
-    // debug('dedent(): currentState=', currentState)
-    // const peek = super.currentState
-    // debug('dedent(): currentState=', currentState)
-    // if (currentState != peek) {
-    //   throw new Error("AAK!!!!")
-    // }
-
-    // if (super.currentState == undefined) {
-    //   debug('dedent(): state=', super.state)
-    //   // debug('dedent(): pushing UNBUF_CODE_BLOCK')
-    //   // super.push('UNBUF_CODE_BLOCK')
-    //   // super.push('UNBUF_CODE_BLOCK')
-    //   debug('dedent(): state=', super.state)
-    // }
-
-    // const prevState = super.dedent()
-
-    // if (super.currentState === 'UNBUF_CODE_FOLLOWER') {
-    //   debug('dedent() again')
-    //   super.dedent()
-    // }
-    // // else if (super.currentState === 'UNBUF_CODE_FOLLOWER') {
-
-    // // }
-    //   debug('dedent(): prevState=', prevState)
-    //   debug('dedent(): state=', super.state)
-    // return prevState
-  // }
-  get [Symbol.toStringTag]() {
-    return '' + Math.round(this.#id * 1e10)
+  dedent() {
+    debug('dedent')
+    const tempNodent = super.nodent()
+    if (!!this.#stickyState) {
+      debug('dedent(): super.dedent()=' + tempNodent)
+      if (this.#stickyState === 'TEXT') {
+        if (tempNodent === 'TEXT_BLOCK') {
+          return 'TEXT'
+        }
+        return undefined
+      }
+      const tempStickyState = this.#stickyState
+      this.#stickyState = undefined
+      return tempStickyState
+    }
+    else {
+      return tempNodent
+    }
   }
 }
 
