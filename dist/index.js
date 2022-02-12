@@ -191,7 +191,7 @@ class LexingTransformer extends stream.Transform {
       // this.state.pop();
     }
     else {
-      this.#currentState = this.state.nodent()
+      this.#currentState = this.state.nodent(this.#currentState)
       
       transformerDebug('nodent: this.#currentState=', this.#currentState);
 
@@ -238,8 +238,9 @@ class LexingTransformer extends stream.Transform {
           delete newObj.children;
           nestedChildren = ', "children":[' + childrenStr + ']';
         }
-        else if (this.#currentState == 'MULTI_LINE_ATTRS' && newObj.state == 'MULTI_LINE_ATTRS') {
+        else if (this.#currentState == 'MULTI_LINE_ATTRS' && newObj.state == 'MULTI_LINE_ATTRS_END') {
           // this.state.pop();
+          this.#currentState = 'MULTI_LINE_ATTRS_END'
         }
         else if (this.#currentState == 'MULTI_LINE_ATTRS' && !newObj.hasOwnProperty('state')) {
           // this.state.pop();
@@ -270,44 +271,7 @@ class LexingTransformer extends stream.Transform {
 
       let sourceFile = (this.override ?? (this.useAbsolutePath ? path.resolve(this.filename) : path.relative('', this.filename)))
       if (newObj.type === 'include' || newObj.type === 'extends') {
-
-        if (!newObj.hasOwnProperty('val') && !newObj.hasOwnProperty('file')) {
-          throw new Error('No file to ' + newObj.type + '. Object=' + inspect(newObj, false, 3))
-        }
-
-        let fileToInclude = newObj.val ?? newObj.file;
-
-        if (path.extname(fileToInclude) === '') {
-          fileToInclude += '.pug'
-        }
-
-        // console.group(newObj.type + ' ' + newObj.val)
-
-        debug("newObj.val=" + newObj.val)
-        debug('fileToInclude=' + fileToInclude)
-        debug("override=" + this.override)
-
-        debug("path.resolve(path.dirname(this.filename), fileToInclude)=" + 'path.resolve("' +path.dirname(this.filename)+'","'+ fileToInclude+'")')
-        let resolvedPath = path.resolve(path.dirname(this.filename), fileToInclude);
-        
-        debug('real file=' + this.filename)
-        debug('path.relative(\'\', this.filename)=' + path.relative('', this.filename))
-        debug('resolvedPath=' + resolvedPath)
-        // console.groupEnd()
-
-        if (isSupportedFileExtension(path.extname(resolvedPath))) {
-          this.filesToAlsoParse.push(resolvedPath)
-        }
-        else {
-
-        }
-
-        if (exists(resolvedPath)) {
-          debug(chalk.green('File ' + resolvedPath + ' exists'))
-        }
-        else {
-          debug(chalk.red('File ' + resolvedPath + ' does not exist'))
-        }
+        this.resolveIncludedFile(newObj);
       }
 
       const newObjStringified = JSON.stringify(newObj);
@@ -315,6 +279,50 @@ class LexingTransformer extends stream.Transform {
 
       this.stack.push({ obj: (newObj.type == 'tag' || newObj.type == 'unknown' ? newObj.name : newObj.type), symbol: '}' });
     }
+  }
+
+  resolveIncludedFile(newObj) {
+    if (!newObj.hasOwnProperty('val')) { // && !newObj.hasOwnProperty('file')) {
+      throw new Error('No file to ' + newObj.type + '. Object=' + inspect(newObj, false, 3));
+    }
+
+    let fileToInclude = newObj.val
+
+    // if (path.extname(fileToInclude) === '') {
+    //   fileToInclude += '.pug';
+    // }
+
+    // console.group(newObj.type + ' ' + newObj.val)
+    // debug("newObj.val=" + newObj.val);
+    // debug('fileToInclude=' + fileToInclude);
+    // debug("override=" + this.override);
+
+    // debug("path.resolve(path.dirname(this.filename), fileToInclude)=" + 'path.resolve("' + path.dirname(this.filename) + '","' + fileToInclude + '")');
+    let resolvedPath = path.resolve(path.dirname(this.filename), fileToInclude);
+
+    // debug('real file=' + this.filename);
+    // debug('path.relative(\'\', this.filename)=' + path.relative('', this.filename));
+    // debug('resolvedPath=' + resolvedPath);
+    // console.groupEnd()
+    // if (isSupportedFileExtension(path.extname(resolvedPath))) {
+    //   this.filesToAlsoParse.push(resolvedPath);
+    //   // debug('this.filesToAlsoParse=', this.filesToAlsoParse);
+    // }
+    // else {
+    // }
+
+    newObj.resolvedVal = resolvedPath
+
+    // if (exists(resolvedPath)) {
+    //   debug(chalk.green('File ' + resolvedPath + ' exists'));
+    // }
+    // else {
+    //   debug(chalk.red('File ' + resolvedPath + ' does not exist'));
+    // }
+  }
+
+  resolveIncludedFilename(sourceFilename, includeFilename) {
+    return path.resolve(path.dirname(sourceFilename), includeFilename)
   }
 
   analyzeLine(el) {

@@ -152,7 +152,8 @@ tap.test('script whitespace', t => {
       }],
     }, {
       "source": "test",
-      "type": "block_end",
+      "type": "text",
+      "val": "}",
       "lineNumber": 6,
     }],
   }], t)

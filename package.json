@@ -21,9 +21,9 @@
   "author": "Adam Koch (aakoch)",
   "license": "MIT",
   "dependencies": {
-    "@foo-dog/utils": "^0.2.2",
+    "@foo-dog/utils": "file:../utils",
     "@jaredpalmer/wrapline": "^2.0.2",
-    "chai-equal-for-long-text": "^0.2.1",
+    "chai-equal-for-long-text": "file:../chai-equal-for-long-text",
     "chalk": "^4.1.2",
     "command-line-args": "^5.2.0",
     "command-line-usage": "^6.1.1",

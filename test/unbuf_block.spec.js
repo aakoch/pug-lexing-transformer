@@ -6,25 +6,32 @@ tap.test('unbuffered code with tag', test => {
   var list = ["Uno", "Dos", "Tres", "Cuatro", "Cinco", "Seis"]
 each item in list
   li= item
-  `, 
-  [{
-    source: "test",
-    type: "unbuf_code_block",
-    lineNumber: 2,
-    children: [
-      { 
-        source: "test",type: "unbuf_code", val: 'var list = ["Uno", "Dos", "Tres", "Cuatro", "Cinco", "Seis"]', "lineNumber": 3 }
-    ]
-  },
-  {
-    source: "test",
-    type: "each",
-    val: "item in list",
-    lineNumber: 4,
-    children: [
-      { 
-        source: "test",type: "unbuf_code", val: "li= item", "lineNumber": 5 }
-    ]
-  }
-  ], test)
+  `,
+    [{
+      source: "test",
+      type: "unbuf_code_block",
+      lineNumber: 2,
+      children: [
+        {
+          source: "test", type: "unbuf_code", val: 'var list = ["Uno", "Dos", "Tres", "Cuatro", "Cinco", "Seis"]', "lineNumber": 3
+        }
+      ]
+    },
+    {
+      source: "test",
+      type: "each",
+      val: "item in list",
+      lineNumber: 4,
+      children: [
+        {
+          source: "test",
+          "name": "li",
+          "type": "tag",
+          "assignment": true,
+          "val": "item",
+          "lineNumber": 5
+        }
+      ]
+    }
+    ], test)
 })
