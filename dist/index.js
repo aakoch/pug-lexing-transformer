@@ -37,7 +37,7 @@ class LexingTransformer extends stream.Transform {
   }
   lineNo = 0
   buffer = []
-  useAbsolutePath = false
+  useAbsolutePath = true
   filesToAlsoParse = []
   override
   state = new IndentState()
@@ -75,6 +75,7 @@ class LexingTransformer extends stream.Transform {
       this.push(this.stack.pop().symbol)
     }
     callback()
+    transformerDebug('exiting _flush')
   }
   _transform(str, enc, callback) {
     transformerDebug('entering _transform')
@@ -93,6 +94,7 @@ class LexingTransformer extends stream.Transform {
       }
       catch (err) {
         let e
+        // console.error(err)
         if (err.name === 'JisonParserError') {
           e = new Error('Unexpected system error. Please report to the developer: ' + err.message)
         }
@@ -288,9 +290,9 @@ class LexingTransformer extends stream.Transform {
 
     let fileToInclude = newObj.val
 
-    // if (path.extname(fileToInclude) === '') {
-    //   fileToInclude += '.pug';
-    // }
+    if (path.extname(fileToInclude) === '') {
+      fileToInclude += '.pug';
+    }
 
     // console.group(newObj.type + ' ' + newObj.val)
     // debug("newObj.val=" + newObj.val);
@@ -335,7 +337,7 @@ class LexingTransformer extends stream.Transform {
     catch (err) {
       let e
       if (err.name === 'JisonLexerError') {
-        console.error(err)
+        // console.error(err)
         e = new LexingError(err.message.replace('line 1', 'line ' + this.lineNo), { cause: err })
       }
       else {
