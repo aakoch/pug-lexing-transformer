@@ -5,7 +5,7 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
-exports[`test/index.spec.js TAP test basic file with snapshot > File /Users/aakoch/projects/new-foo/workspaces/pug-lexing-transformer/test/pug/basic.pug did not match snapshot 1`] = `
+exports[`test/index.spec.js TAP test basic file with snapshot > File /Users/aakoch/projects/new-foo/workspaces/lexing-transformer/test/pug/basic.pug did not match snapshot 1`] = `
 [ 
 {"source":"test/pug/basic.pug","name":"html","type":"tag","lineNumber": 1, "children":[ 
   {"source":"test/pug/basic.pug","name":"body","type":"tag","lineNumber": 2, "children":[ 

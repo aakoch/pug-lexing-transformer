@@ -1,7 +1,7 @@
 import {} from '@foo-dog/utils'
 import IndentState from './indentState.js'
 import debugFunc from 'debug'
-const debug = debugFunc('pug-lexing-transformer:fooDogIndentState')
+const debug = debugFunc('lexing-transformer:fooDogIndentState')
 
 class FooDogIndentState extends IndentState {
   constructor() {

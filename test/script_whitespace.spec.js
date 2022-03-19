@@ -1,5 +1,5 @@
 import debugFunc from 'debug'
-const debug = debugFunc('pug-lexing-transformer:test')
+const debug = debugFunc('lexing-transformer:test')
 
 import { tap, testString } from "./fixture.js"
 

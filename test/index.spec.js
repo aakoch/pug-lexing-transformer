@@ -5,7 +5,7 @@ import stream from 'stream'
 import indentTransformer from 'indent-transformer';
 import WrapLine from '@jaredpalmer/wrapline'
 import debugFunc from 'debug'
-const debug = debugFunc('pug-lexing-transformer:test')
+const debug = debugFunc('lexing-transformer:test')
 import LexingTransformer from '../src/index.js'
 // import { PostLexingTransformer } from 'post-lexing-transformer'
 import chalk from 'chalk';

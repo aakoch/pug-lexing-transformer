@@ -3,7 +3,7 @@ import path from 'path'
 import indentTransformer from 'indent-transformer'
 import WrapLine from '@jaredpalmer/wrapline'
 import debugFunc from 'debug'
-const debug = debugFunc('pug-lexing-transformer:cli')
+const debug = debugFunc('lexing-transformer:cli')
 import LexingTransformer from './index.js'
 import { PostLexingTransformer } from 'post-lexing-transformer'
 import chalk from 'chalk'

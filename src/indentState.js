@@ -1,6 +1,6 @@
 import { } from '@foo-dog/utils'
 import debugFunc from 'debug'
-const debug = debugFunc('pug-lexing-transformer:indentState')
+const debug = debugFunc('lexing-transformer:indentState')
 
 class IndentState {
   #stack = []
