@@ -226,36 +226,36 @@ import FooDogIndentState from '../src/fooDogIndentState.js'
   //   test.end()
   // })
 
-// test/index.spec.js 2> 2022-01-24T02:31:58.858Z pug-lexing-transformer inputString= NO1 script.
-// test/index.spec.js 2> 2022-01-24T02:31:58.858Z pug-lexing-transformer:fooDogIndentState nodent
-// test/index.spec.js 2> 2022-01-24T02:31:58.858Z pug-lexing-transformer:indentState nodent undefined
-// test/index.spec.js 2> 2022-01-24T02:31:58.858Z pug-lexing-transformer nodent: this.#currentState= undefined
-// test/index.spec.js 2> 2022-01-24T02:31:58.858Z pug-lexing-transformer before state= undefined
-// test/index.spec.js 2> 2022-01-24T02:31:58.858Z pug-lexing-transformer:line-analyzer sending to parser: script.
-// test/index.spec.js 2> 2022-01-24T02:31:58.858Z pug-line-lexer line_splitter: DOT_END
-// test/index.spec.js 2> 2022-01-24T02:31:58.858Z pug-line-lexer line_end: <blank>
-// test/index.spec.js 2> 2022-01-24T02:31:58.858Z pug-line-lexer line: line_start line_splitter line_end: $line_start= { name: 'script', type:
+// test/index.spec.js 2> 2022-01-24T02:31:58.858Z lexing-transformer inputString= NO1 script.
+// test/index.spec.js 2> 2022-01-24T02:31:58.858Z lexing-transformer:fooDogIndentState nodent
+// test/index.spec.js 2> 2022-01-24T02:31:58.858Z lexing-transformer:indentState nodent undefined
+// test/index.spec.js 2> 2022-01-24T02:31:58.858Z lexing-transformer nodent: this.#currentState= undefined
+// test/index.spec.js 2> 2022-01-24T02:31:58.858Z lexing-transformer before state= undefined
+// test/index.spec.js 2> 2022-01-24T02:31:58.858Z lexing-transformer:line-analyzer sending to parser: script.
+// test/index.spec.js 2> 2022-01-24T02:31:58.858Z line-lexer line_splitter: DOT_END
+// test/index.spec.js 2> 2022-01-24T02:31:58.858Z line-lexer line_end: <blank>
+// test/index.spec.js 2> 2022-01-24T02:31:58.858Z line-lexer line: line_start line_splitter line_end: $line_start= { name: 'script', type:
 // 'tag' } , $line_end= undefined
-// test/index.spec.js 2> 2022-01-24T02:31:58.859Z pug-line-lexer merging { name: 'script', type: 'tag' } { state: 'TEXT_START' }
-// test/index.spec.js 2> 2022-01-24T02:31:58.859Z pug-line-lexer merging inside _mergeWith state undefined TEXT_START
-// test/index.spec.js 2> 2022-01-24T02:31:58.859Z pug-line-lexer merging  returning { name: 'script', type: 'tag', state: 'TEXT_START' }
-// test/index.spec.js 2> 2022-01-24T02:31:58.859Z pug-lexing-transformer:line-analyzer returned from parser:  { name: 'script', type: 'tag', state:
+// test/index.spec.js 2> 2022-01-24T02:31:58.859Z line-lexer merging { name: 'script', type: 'tag' } { state: 'TEXT_START' }
+// test/index.spec.js 2> 2022-01-24T02:31:58.859Z line-lexer merging inside _mergeWith state undefined TEXT_START
+// test/index.spec.js 2> 2022-01-24T02:31:58.859Z line-lexer merging  returning { name: 'script', type: 'tag', state: 'TEXT_START' }
+// test/index.spec.js 2> 2022-01-24T02:31:58.859Z lexing-transformer:line-analyzer returned from parser:  { name: 'script', type: 'tag', state:
 //  'TEXT_START' }
-// test/index.spec.js 2> 2022-01-24T02:31:58.859Z pug-lexing-transformer returned state= TEXT_START
-// test/index.spec.js 2> 2022-01-24T02:31:58.860Z pug-lexing-transformer entering _transform
-// test/index.spec.js 2> 2022-01-24T02:31:58.860Z pug-lexing-transformer inputString= IN2 if (foo) {
-// test/index.spec.js 2> 2022-01-24T02:31:58.860Z pug-lexing-transformer:fooDogIndentState indent TEXT_START
-// test/index.spec.js 2> 2022-01-24T02:31:58.860Z pug-lexing-transformer:indentState indent TEXT_BLOCK
-// test/index.spec.js 2> 2022-01-24T02:31:58.860Z pug-lexing-transformer before state= TEXT
-// test/index.spec.js 2> 2022-01-24T02:31:58.860Z pug-lexing-transformer:line-analyzer sending to parser: <TEXT>if (foo) {
-// test/index.spec.js 2> 2022-01-24T02:31:58.860Z pug-line-lexer 80 yy_.yytext= if (foo) {
-// test/index.spec.js 2> 2022-01-24T02:31:58.860Z pug-lexing-transformer:line-analyzer returned from parser:  { type: 'text', val: 'if (foo) {' }
-// test/index.spec.js 2> 2022-01-24T02:31:58.860Z pug-lexing-transformer entering _transform
-// test/index.spec.js 2> 2022-01-24T02:31:58.860Z pug-lexing-transformer inputString= IN4 bar();
-// test/index.spec.js 2> 2022-01-24T02:31:58.860Z pug-lexing-transformer:fooDogIndentState indent TEXT
-// test/index.spec.js 2> 2022-01-24T02:31:58.860Z pug-lexing-transformer:indentState indent TEXT
-// test/index.spec.js 2> 2022-01-24T02:31:58.860Z pug-lexing-transformer before state= undefined
-// test/index.spec.js 2> 2022-01-24T02:31:58.860Z pug-lexing-transformer:line-analyzer sending to parser: bar();
+// test/index.spec.js 2> 2022-01-24T02:31:58.859Z lexing-transformer returned state= TEXT_START
+// test/index.spec.js 2> 2022-01-24T02:31:58.860Z lexing-transformer entering _transform
+// test/index.spec.js 2> 2022-01-24T02:31:58.860Z lexing-transformer inputString= IN2 if (foo) {
+// test/index.spec.js 2> 2022-01-24T02:31:58.860Z lexing-transformer:fooDogIndentState indent TEXT_START
+// test/index.spec.js 2> 2022-01-24T02:31:58.860Z lexing-transformer:indentState indent TEXT_BLOCK
+// test/index.spec.js 2> 2022-01-24T02:31:58.860Z lexing-transformer before state= TEXT
+// test/index.spec.js 2> 2022-01-24T02:31:58.860Z lexing-transformer:line-analyzer sending to parser: <TEXT>if (foo) {
+// test/index.spec.js 2> 2022-01-24T02:31:58.860Z line-lexer 80 yy_.yytext= if (foo) {
+// test/index.spec.js 2> 2022-01-24T02:31:58.860Z lexing-transformer:line-analyzer returned from parser:  { type: 'text', val: 'if (foo) {' }
+// test/index.spec.js 2> 2022-01-24T02:31:58.860Z lexing-transformer entering _transform
+// test/index.spec.js 2> 2022-01-24T02:31:58.860Z lexing-transformer inputString= IN4 bar();
+// test/index.spec.js 2> 2022-01-24T02:31:58.860Z lexing-transformer:fooDogIndentState indent TEXT
+// test/index.spec.js 2> 2022-01-24T02:31:58.860Z lexing-transformer:indentState indent TEXT
+// test/index.spec.js 2> 2022-01-24T02:31:58.860Z lexing-transformer before state= undefined
+// test/index.spec.js 2> 2022-01-24T02:31:58.860Z lexing-transformer:line-analyzer sending to parser: bar();
 // test/index.spec.js 2> JisonLexerError: Lexical error on line 1: Unrecognized text.
 
 

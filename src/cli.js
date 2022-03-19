@@ -1,6 +1,5 @@
 import fs from 'fs'
 import path from 'path'
-import { finished } from 'stream/promises'
 import indentTransformer from 'indent-transformer'
 import WrapLine from '@jaredpalmer/wrapline'
 import debugFunc from 'debug'
@@ -12,6 +11,7 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 import { inspect } from 'util'
 import { exists, parseArguments } from '@foo-dog/utils'
+import stream from 'node:stream'
 
 function printUsage() {
   const help = ['']
@@ -38,29 +38,73 @@ function printUsage() {
   console.log(help.join('\n'))
 }
 
-parseArguments(process.argv.slice(2), printUsage)
-    .then(async options => {
+const directoryExists = dir => {
+  try {
+    fs.accessSync(dir, fs.constants.R_OK)
+    return true
+  } catch (e) {}
+  return false
+}
+
+const optionsGenerator = function* (files, inputDirectory, outputDirectory) {
+  for (let index = 0; index < files.length; index++) {
+    const inFile = path.resolve(inputDirectory, files[index])
+    const outFile = outputDirectory === 'stdout' ? 'stdout' : path.resolve(outputDirectory, path.parse(files[index]).name + '.json')
+    debug('optionsGenerator: inFile=', inFile)
+    debug('optionsGenerator: outFile=', inFile)
+    let obj = {
+      in: {
+        name: inFile,
+        createStream: function () {
+          return fs.createReadStream(inFile)
+        },
+      },
+      out: {
+        name: outFile,
+        createStream: function () {
+          debug('optionsGenerator: outFile=', outFile)
+          if (outputDirectory === 'stdout') {
+            return process.stdout
+          } else {
+            const output = path.resolve(outputDirectory, path.parse(inFile).name + '.json')
+            const ws = fs.createWriteStream(output, { flags: 'w' })
+            return ws
+          }
+        },
+      },
+    }
+    yield obj
+  }
+  return {}
+}
+
+parseArguments(process.argv.slice(2), printUsage).then(async options => {
   try {
     debug('options=', inspect(options, false, 2))
+    debug('options.in=', options.in)
+
+    const fullLexingTransformer = new FullLexingTransformer(options)
 
     if (options.in.isDir()) {
-      debug('options.in=', options.in)
       debug('options.in is a directory')
       debug('options.out=', options.out)
       if (!directoryExists(options.out.name)) {
         fs.mkdirSync(options.out.name, { recursive: true })
       }
 
-      const generator = optionsGenerator(options.in.files(), options.out.name)
+      const generator = optionsGenerator(options.in.files(), options.in.name, options.out.name)
       let opts = generator.next()
       while (!opts.done) {
-        await processFile(opts.value)
+        try {
+          await fullLexingTransformer.processFile(opts.value)
+        } catch (e) {
+          console.error('Error parsing ' + opts.value.in.name + ': ', e)
+        }
         opts = generator.next()
       }
     } else {
-      debug('options.in=', options.in)
       debug('options.in is NOT a directory')
-      await processFile(options)
+      await fullLexingTransformer.processFile(options)
     }
 
     debug('Exiting main')
@@ -72,32 +116,21 @@ parseArguments(process.argv.slice(2), printUsage)
   }
 })
 
-// function topLevel() {
-//   let stacktrace = new Error().stack;
-//   console.log(process)
-//   return stacktrace.length <= 544;
-// }
-
-var alreadyParsed = []
-
-async function processFile(options) {
-  let fullFilename
-  let count = 1
-  try {
-    debug(count++)
-    debug('options=', options)
-    fullFilename = path.resolve(options.in.name)
-    const lexingTransformer = new LexingTransformer({
+class FullLexingTransformer {
+  constructor(options) {
+    this.options = options
+    const fullFilename = options.in.name === 'stdin' ? 'stdin' : path.resolve(options.in.name)
+    this.lexingTransformer = new LexingTransformer({
       inFile: fullFilename,
       override: options.override,
       allowDigitToStartClassName: options.allowDigitToStartClassName ?? false,
     })
-    debug(count++)
-    // const postLexingTransformer = new PostLexingTransformer()
-    // debug(count++)
-    const readStream = options.in.createStream()
-    
-    const fullStream = readStream
+  }
+
+  alreadyParsed = []
+  addWriteStreams(inStream) {
+    debug('addWriteStreams(): this.options.out=', this.options.out)
+    const outStream = inStream
       .pipe(WrapLine('|'))
       .pipe(
         WrapLine(function (pre, line) {
@@ -107,105 +140,99 @@ async function processFile(options) {
         })
       )
       .pipe(indentTransformer())
-      .pipe(lexingTransformer)
+      .pipe(this.lexingTransformer)
       // .pipe(postLexingTransformer)
-      .pipe(options.out.createStream())
-      
-      // readStream.on('end', () => {
-      //   fullStream.resume()
-      //   fullStream.end()
-      // });
-
-      // console.log('\n')
-      // debug('fullStream=', fullStream)
-    debug('before finished')
-
-
-    // await finished(readStream).then( async (err) => {
-    //   debug('inside finished: lexingTransformer.filesToAlsoParse=', lexingTransformer.filesToAlsoParse)
-    //   // if (err) {
-    //   //   console.error('stream threw error', err)
-    //   // } else 
-    //   if (lexingTransformer.filesToAlsoParse.length) {
-    //     console.log(chalk.blue(chalk.bold('Files to also parse:')))
-    //     try {
-    //     for (const filename of lexingTransformer.filesToAlsoParse) {
-    //       const prefix = '  ' + chalk.magenta(filename) + ' -- '
-    //       if (exists(path.resolve('build' + filename + '.json'))) {
-    //         console.log(prefix + 'skipping')
-    //       } else if (alreadyParsed.includes(filename)) {
-    //         console.log(prefix + 'skipping (already parsed)')
-    //       } else {
-    //         console.log(prefix + chalk.green('parsing to ' + path.resolve('build' + filename + '.json')))
-
-    //         const options = await parseArguments(process, printUsage)
-    //         await processFile(options)
-    //         alreadyParsed.push(filename)
-    //       }
-    //     }
-    //   } catch (e) {
-    //     console.error(e)
-    //     throw new Error(`Could not parse ${options?.in?.name}`, { cause: e }, fullFilename)
-    //   }
-    //   }
-
-    //   debug('before cleanup')
-    //   cleanup()
-    //   debug('after cleanup')
-    // })
-    debug('after finished')
-    // debug('before drain')
-    // fullStream.resume()
-    // debug('after drain')
-  } catch (e) {
-    console.error(e)
-    throw new Error(`Could not parse ${options?.in?.name}`, { cause: e }, fullFilename)
+      .pipe(this.options.out.createStream())
+    inStream.on('complete', e => {
+      outStream.destro(y)
+    })
+    return outStream
   }
-}
 
-// TODO: Where is the separation? How much does parseArguments do? Should it create the files() function? Where should createStream() be created?
-// parseArguments creates the createStream() function today.
-// Make it a node with children? Or an iterator? https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators
-// function* makeRangeIterator(start = 0, end = 100, step = 1) {
-//   let iterationCount = 0;
-//   for (let i = start; i < end; i += step) {
-//       iterationCount++;
-//       yield i;
-//   }
-//   return iterationCount;
-// }
-function* optionsGenerator(files, outputDirectory) {
-  for (let index = 0; index < files.length; index++) {
-    debug('optionsGenerator: files[index]=', files[index])
-    let obj = {
-      in: {
-        name: files[index],
-        createStream: function () {
-          return fs.createReadStream(files[index])
-        },
-      },
-      out: {
-        name: path.parse(files[index]).name + '.json',
-        createStream: function () {
-          debug('optionsGenerator: files[index]=', files[index])
-          debug('optionsGenerator: outputDirectory=', outputDirectory)
-          const output = path.resolve(outputDirectory, path.parse(files[index]).name + '.json')
-          const ws = fs.createWriteStream(output, { flags: 'w' })
-          return ws
-        },
-      },
+  async processFile(options) {
+    try {
+      debug('options=', options)
+      const readStream = options.in.createStream()
+
+      debug('options.in.name=', options.in.name)
+      if (options.in.name === 'stdin' && options.out.name === 'stdout') {
+        process.stdin.resume()
+        process.stdin.setEncoding('ascii')
+        var input = ''
+        let newlineCount = 0
+
+        const f1 = function () {
+          const fullStream = this.addWriteStreams(stream.Readable.from(input))
+
+          process.stdin.destroy()
+        }
+
+        process.stdin.on('data', function (chunk) {
+          // This is where we should take the inputs and make them ready.
+          input += chunk
+          // This function will stop running as soon as we are done with the input in the Stdin
+          if (chunk === '\n') {
+            f1()
+          }
+        })
+
+        process.stdin.on('end', f1)
+      } else {
+        const fullStream = this.addWriteStreams(readStream)
+      }
+
+      debug('before finished')
+
+      // await finished(readStream).then( async (err) => {
+      //   debug('inside finished: lexingTransformer.filesToAlsoParse=', lexingTransformer.filesToAlsoParse)
+      //   // if (err) {
+      //   //   console.error('stream threw error', err)
+      //   // } else
+      //   if (lexingTransformer.filesToAlsoParse.length) {
+      //     console.log(chalk.blue(chalk.bold('Files to also parse:')))
+      //     try {
+      //     for (const filename of lexingTransformer.filesToAlsoParse) {
+      //       const prefix = '  ' + chalk.magenta(filename) + ' -- '
+      //       if (exists(path.resolve('build' + filename + '.json'))) {
+      //         console.log(prefix + 'skipping')
+      //       } else if (alreadyParsed.includes(filename)) {
+      //         console.log(prefix + 'skipping (already parsed)')
+      //       } else {
+      //         console.log(prefix + chalk.green('parsing to ' + path.resolve('build' + filename + '.json')))
+
+      //         const options = await parseArguments(process, printUsage)
+      //         await processFile(options)
+      //         alreadyParsed.push(filename)
+      //       }
+      //     }
+      //   } catch (e) {
+      //     console.error(e)
+      //     throw new Error(`Could not parse ${options?.in?.name}`, { cause: e }, fullFilename)
+      //   }
+      //   }
+
+      // })
+      debug('after finished')
+      // debug('before drain')
+      // fullStream.resume()
+      // debug('after drain')
+    } catch (e) {
+      console.error(e)
+      throw new Error(`Could not parse ${options?.in?.name}`, { cause: e }, options.in.name)
     }
-    yield obj
   }
-  return {}
-}
 
-function directoryExists(dir) {
-  try {
-    fs.accessSync(dir, fs.constants.R_OK)
-    return true
-  } catch (e) {}
-  return false
+  // TODO: Where is the separation? How much does parseArguments do? Should it create the files() function? Where should createStream() be created?
+  // parseArguments creates the createStream() function today.
+  // Make it a node with children? Or an iterator? https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators
+  // function* makeRangeIterator(start = 0, end = 100, step = 1) {
+  //   let iterationCount = 0;
+  //   for (let i = start; i < end; i += step) {
+  //       iterationCount++;
+  //       yield i;
+  //   }
+  //   return iterationCount;
+  // }
 }
 
 // function processFiles(options) {

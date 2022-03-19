@@ -1,11 +1,11 @@
 import stream from 'stream'
 import path from 'path';
-import { Parser, InlineParser } from 'pug-line-lexer'
+import { Parser, InlineParser } from 'line-lexer'
 import debugFunc from 'debug'
 import { inspect } from 'util';
-const debug = debugFunc('pug-lexing-transformer')
-const streamDebug = debugFunc('pug-lexing-transformer:line-analyzer')
-const transformerDebug = debugFunc('pug-lexing-transformer')
+const debug = debugFunc('lexing-transformer')
+const streamDebug = debugFunc('lexing-transformer:line-analyzer')
+const transformerDebug = debugFunc('lexing-transformer')
 import { Worker } from 'worker_threads';
 import fs from 'fs';
 import chalk from 'chalk';
@@ -271,7 +271,8 @@ class LexingTransformer extends stream.Transform {
 
       delete newObj.state;
 
-      let sourceFile = (this.override ?? (this.useAbsolutePath ? path.resolve(this.filename) : path.relative('', this.filename)))
+      debug('this.filename=', this.filename)
+      let sourceFile = this.filename === 'stdin' ? 'stdin' : (this.override ?? (this.useAbsolutePath ? path.resolve(this.filename) : path.relative('', this.filename)))
       if (newObj.type === 'include' || newObj.type === 'extends') {
         this.resolveIncludedFile(newObj);
       }

@@ -1,11 +1,11 @@
 {
-  "name": "pug-lexing-transformer",
+  "name": "@foo-dog/lexing-transformer",
   "version": "0.1.0",
-  "description": "Parses Pug taking the output from the indent-transformer and running through pug-line-lexer",
+  "description": "Parses Foo-Dog v1 files taking the output from the indent-transformer and running through line-lexer. Also used as a part of the Pug alternative",
   "main": "dist/index.js",
   "scripts": {
     "build": "mkdir -p dist && cp src/index.js src/indentState.js src/fooDogIndentState.js dist/",
-    "test": "npm run build && tap",
+    "test": "npm run build && c8 tap --no-coverage",
     "snap": "tap"
   },
   "keywords": [
@@ -21,25 +21,25 @@
   "author": "Adam Koch (aakoch)",
   "license": "MIT",
   "dependencies": {
+    "@foo-dog/indent-transformer": "file:../indent-transformer",
+    "@foo-dog/line-lexer": "file:../line-lexer",
+    "@foo-dog/post-lexing-transformer": "file:../post-lexing-transformer",
     "@foo-dog/utils": "file:../utils",
     "@jaredpalmer/wrapline": "^2.0.2",
-    "chai-equal-for-long-text": "file:../chai-equal-for-long-text",
+    "chai-equal-for-long-text": "^0.2.1",
     "chalk": "^4.1.2",
     "command-line-args": "^5.2.0",
     "command-line-usage": "^6.1.1",
-    "debug": "^4.3.2",
-    "indent-transformer": "file:../indent-transformer",
-    "minimist": "^1.2.5",
-    "post-lexing-transformer": "file:../post-lexing-transformer",
-    "pug-line-lexer": "file:../pug-line-lexer"
+    "debug": "^4.3.2"
   },
   "type": "module",
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "^0.1.2",
+    "c8": "^7.11.0",
     "dyp": "^1.0.1",
     "filecompare": "^1.0.4",
     "nyc": "^15.1.0",
-    "tap": "^15.1.5"
+    "tap": "^15.2.3"
   },
   "tap": {
     "node-arg": [

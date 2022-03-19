@@ -27,8 +27,8 @@ for f in $(ls build/*.pug); do echo ${f%.*}.json; export errfilename="${f%.*}.er
 
 ## Dependencies
 
-- pug-line-lexer
+- line-lexer
 - post-lexing-transformer (used as part of the CLI but probably needs incorporated)
 
 ## Flow
-pug-lexing-transformer -> foo-dog-attrs -> generator
+lexing-transformer -> attrs -> generator

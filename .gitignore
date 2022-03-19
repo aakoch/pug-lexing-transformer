@@ -1,7 +1,8 @@
-node_modules
+node_modules/
 temp.json
-.nyc_output
-build
+.nyc_output/
+build/
+coverage/
 .DS_Store
 errors.txt
 out.txt
