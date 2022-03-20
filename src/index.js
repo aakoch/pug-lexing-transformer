@@ -1,15 +1,15 @@
 import stream from 'stream'
 import path from 'path';
-import { Parser, InlineParser } from 'line-lexer'
+import { Parser, InlineParser } from '@foo-dog/line-lexer'
 import debugFunc from 'debug'
 import { inspect } from 'util';
 const debug = debugFunc('lexing-transformer')
 const streamDebug = debugFunc('lexing-transformer:line-analyzer')
 const transformerDebug = debugFunc('lexing-transformer')
-import { Worker } from 'worker_threads';
-import fs from 'fs';
-import chalk from 'chalk';
-import { exists, isSupportedFileExtension } from '@foo-dog/utils'
+// import { Worker } from 'worker_threads';
+// import fs from 'fs';
+// import chalk from 'chalk';
+// import { exists, isSupportedFileExtension } from '@foo-dog/utils'
 import IndentState from './FooDogIndentState.js'
 const parser = Parser
 // const inlineParser = InlineParser.parser

@@ -101,22 +101,22 @@ tap.test('test1', test => {
     .pipe(concat({ encoding: 'string' }, body => {
       debug('body=', body)
       test.ok(body)
-      test.same(JSON.parse(body), [{"source":"test","name":"html","type":"tag","lineNumber": 1}])
+      test.same(JSON.parse(body), [{"source":simpleProjectRootDir()+"/test","name":"html","type":"tag","lineNumber": 1}])
       test.end()
     }));
 })
 
 tap.test('test method testString', test => {
-  testString('html', [{"source":"test","name":"html","type":"tag","lineNumber": 1}], test)
+  testString('html', [{"source":simpleProjectRootDir()+"/test","name":"html","type":"tag","lineNumber": 1}], test)
 })
 
 tap.test('test basic file', test => {
   const fullPath = simpleProjectRootDir() + '/test/pug/basic.pug'
   testFile(fullPath, (
       [
-        {"source":"test/pug/basic.pug","name":"html","type":"tag","lineNumber": 1, "children":[
-        {"source":"test/pug/basic.pug","name":"body","type":"tag","lineNumber": 2, "children":[
-        {"source":"test/pug/basic.pug","name":"h1","type":"tag","val":"Title","lineNumber": 3}]}]}
+        {"source":simpleProjectRootDir()+"/test/pug/basic.pug","name":"html","type":"tag","lineNumber": 1, "children":[
+        {"source":simpleProjectRootDir()+"/test/pug/basic.pug","name":"body","type":"tag","lineNumber": 2, "children":[
+        {"source":simpleProjectRootDir()+"/test/pug/basic.pug","name":"h1","type":"tag","val":"Title","lineNumber": 3}]}]}
       ]
     ), test)
 })
@@ -135,23 +135,23 @@ tap.test('script whitespace', t => {
     bar();
     
   }`, [{
-    "source": "test",
+    "source": simpleProjectRootDir()+"/test",
     "name": "script",
     "type": "tag",
     "lineNumber": 1,
     "children": [{
-      "source": "test",
+      "source": simpleProjectRootDir()+"/test",
       "type": "text",
       "val": "if (foo) {",
       "lineNumber": 2,
       "children": [{
-        "source": "test",
+        "source": simpleProjectRootDir()+"/test",
         "type": "text",
         "val": "bar();",
         "lineNumber": 4,
       }],
     }, {
-      "source": "test",
+      "source": simpleProjectRootDir()+"/test",
       "type": "text",
       "val": "}",
       "lineNumber": 6,
@@ -168,18 +168,18 @@ tap.test('test block with code', t => {
     .toUpperCase()
     `, [
          {
-          "source": "test",
+          "source": simpleProjectRootDir()+"/test",
           "type": "unbuf_code_block",
           "lineNumber": 2,
           "children":  [
              {
-              "source": "test",
+              "source": simpleProjectRootDir()+"/test",
               "type": "unbuf_code",
               "val": "string = item.charAt(0)",
               "lineNumber": 3,
               "children":  [
                  {
-                  "source": "test",
+                  "source": simpleProjectRootDir()+"/test",
                   "type": "unbuf_code",
                   "val": ".toUpperCase()",
                   "lineNumber": 5,
