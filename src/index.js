@@ -278,7 +278,9 @@ class LexingTransformer extends stream.Transform {
       }
 
       const newObjStringified = JSON.stringify(newObj);
-      ret.push(' '.repeat(this.currentIndent * 2) + '{"source":"' + sourceFile + '",' + newObjStringified.substring(1, newObjStringified.length - 1) + ',"lineNumber": ' + this.lineNo + nestedChildren);
+      const newObjStringifiedWithCurlyesRemoved = newObjStringified.substring(1, newObjStringified.length - 1)
+      const curleysRemovedWithOrWithoutComma = newObjStringifiedWithCurlyesRemoved.length > 0 ? newObjStringifiedWithCurlyesRemoved + ',' : ''
+      ret.push(' '.repeat(this.currentIndent * 2) + '{"source":"' + sourceFile + '",' + curleysRemovedWithOrWithoutComma + '"lineNumber": ' + this.lineNo + nestedChildren);
 
       this.stack.push({ obj: (newObj.type == 'tag' || newObj.type == 'unknown' ? newObj.name : newObj.type), symbol: '}' });
     }

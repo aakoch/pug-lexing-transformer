@@ -1,18 +1,12 @@
 import tap from 'tap'
 import fs from 'fs'
-import path from 'path';
 import stream from 'stream'
-import indentTransformer from 'indent-transformer';
+import indentTransformer from '@foo-dog/indent-transformer';
 import WrapLine from '@jaredpalmer/wrapline'
 import debugFunc from 'debug'
 const debug = debugFunc('lexing-transformer:test')
 import LexingTransformer from '../src/index.js'
-// import { PostLexingTransformer } from 'post-lexing-transformer'
-import chalk from 'chalk';
-import { fileURLToPath } from 'url';
-const __filename = fileURLToPath(import.meta.url);
-import { inspect } from 'util';
-// import { exists, parseArguments, simpleProjectRootDir } from '@foo-dog/utils'
+import { simpleProjectRootDir } from '@foo-dog/utils'
 import concat from 'concat-stream'
 
 function testString(input, expected, test) {
@@ -31,11 +25,10 @@ function testString(input, expected, test) {
       debug('body=', body)
       test.ok(body)
       try {
-      test.same(JSON.parse(body), expected)
+        test.same(JSON.parse(body), expected)
       }
       catch (e) {
-        console.error(e.message)
-        console.error(body)
+        throw new Error(e.message + '\nBody:\n' + body, { cause: e })
       }
       test.end()
     }));
@@ -87,5 +80,5 @@ async function testSnapshot(fullPath, test) {
 }
 
 export {
-  tap, testString, testFile, testSnapshot
+  tap, testString, testFile, testSnapshot, simpleProjectRootDir
 }

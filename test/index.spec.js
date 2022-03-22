@@ -2,7 +2,7 @@ import tap from 'tap'
 import fs from 'fs'
 import path from 'path';
 import stream from 'stream'
-import indentTransformer from 'indent-transformer';
+import indentTransformer from '@foo-dog/indent-transformer';
 import WrapLine from '@jaredpalmer/wrapline'
 import debugFunc from 'debug'
 const debug = debugFunc('lexing-transformer:test')
@@ -122,9 +122,9 @@ tap.test('test basic file', test => {
 })
 
 
-tap.test('test basic file with snapshot', test => {
-  const fullPath = simpleProjectRootDir() + '/test/pug/basic.pug'
-  testSnapshot(fullPath, test)
+tap.test('test basic file with snapshot', t => {
+  const fullPath = 'test/pug/basic.pug'
+  testSnapshot(fullPath, t)
 })
 
 tap.test('script whitespace', t => {

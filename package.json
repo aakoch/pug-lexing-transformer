@@ -23,6 +23,7 @@
   "dependencies": {
     "@foo-dog/indent-transformer": "file:../indent-transformer",
     "@foo-dog/line-lexer": "file:../line-lexer",
+    "@foo-dog/lexing-transformer": "file:../lexing-transformer",
     "@foo-dog/post-lexing-transformer": "file:../post-lexing-transformer",
     "@foo-dog/utils": "file:../utils",
     "@jaredpalmer/wrapline": "^2.0.2",

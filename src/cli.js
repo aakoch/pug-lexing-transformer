@@ -1,11 +1,11 @@
 import fs from 'fs'
 import path from 'path'
-import indentTransformer from 'indent-transformer'
+import indentTransformer from '@foo-dog/indent-transformer'
 import WrapLine from '@jaredpalmer/wrapline'
 import debugFunc from 'debug'
 const debug = debugFunc('lexing-transformer:cli')
 import LexingTransformer from './index.js'
-import { PostLexingTransformer } from 'post-lexing-transformer'
+import { PostLexingTransformer } from '@foo-dog/post-lexing-transformer'
 import chalk from 'chalk'
 import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)

@@ -1,14 +1,14 @@
-import { tap, testString } from './fixture.js'
+import { tap, testString, simpleProjectRootDir } from './fixture.js'
 
 tap.test('dot follow a lot later with text', test => {
+
   testString('.\n\n  bar',
     [{
-      source: "test",
-      type: "unbuf_code_block",
-      lineNumber: 2,
+      source: simpleProjectRootDir() + "/test",
+      lineNumber: 1,
       children: [
         {
-          source: "test", type: "unbuf_code", val: 'var list = ["Uno", "Dos", "Tres", "Cuatro", "Cinco", "Seis"]', "lineNumber": 3
+          source: simpleProjectRootDir() + "/test", type: "text", val: 'bar', "lineNumber": 3
         }
       ]
     }
