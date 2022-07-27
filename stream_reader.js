@@ -5,7 +5,7 @@ import util from 'util'
 // import deepFilter from 'deep-filter';
 // import objectify from 'through2-objectify'
 import concat from 'concat-stream'
-import indentTransformer from 'indent-transformer';
+import indentTransformer from '@foo-dog/indent-transformer';
 import _nestingTransformer from './src/index.js';
 import WrapLine from '@jaredpalmer/wrapline'
 
