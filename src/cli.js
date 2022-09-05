@@ -111,8 +111,7 @@ parseArguments(process.argv.slice(2), printUsage).then(async options => {
   } catch (e) {
     if (chalk.stderr.supportsColor) {
       console.error(chalk.stderr(chalk.red(e.message)) + '\n', e)
-    }
-    else {
+    } else {
       console.error('*'.repeat(30) + '\n' + e.message)
     }
   }
@@ -132,18 +131,18 @@ class FullLexingTransformer {
   alreadyParsed = []
   addWriteStreams(inStream) {
     debug('addWriteStreams(): this.options.out=', this.options.out)
-const outStream = inStream
-  .pipe(WrapLine('|'))
-  .pipe(
-    WrapLine(function (pre, line) {
-      // add 'line numbers' to each line
-      pre = pre || 0
-      return pre + 1
-    })
-  )
-  .pipe(indentTransformer())
-  .pipe(this.lexingTransformer)
-  .pipe(this.options.out.createStream())
+    const outStream = inStream
+      .pipe(WrapLine('|'))
+      .pipe(
+        WrapLine(function (pre, line) {
+          // add 'line numbers' to each line
+          pre = pre || 0
+          return pre + 1
+        })
+      )
+      .pipe(indentTransformer())
+      .pipe(this.lexingTransformer)
+      .pipe(this.options.out.createStream())
     inStream.on('complete', e => {
       outStream.destroy()
     })
