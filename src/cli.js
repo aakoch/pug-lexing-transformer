@@ -109,7 +109,9 @@ parseArguments(process.argv.slice(2), printUsage).then(async options => {
 
     debug('Exiting main')
   } catch (e) {
-    if (chalk.stderr.supportsColor) console.error(chalk.stderr(chalk.red(e.message)) + '\n', e)
+    if (chalk.stderr.supportsColor) {
+      console.error(chalk.stderr(chalk.red(e.message)) + '\n', e)
+    }
     else {
       console.error('*'.repeat(30) + '\n' + e.message)
     }
@@ -130,21 +132,20 @@ class FullLexingTransformer {
   alreadyParsed = []
   addWriteStreams(inStream) {
     debug('addWriteStreams(): this.options.out=', this.options.out)
-    const outStream = inStream
-      .pipe(WrapLine('|'))
-      .pipe(
-        WrapLine(function (pre, line) {
-          // add 'line numbers' to each line
-          pre = pre || 0
-          return pre + 1
-        })
-      )
-      .pipe(indentTransformer())
-      .pipe(this.lexingTransformer)
-      // .pipe(postLexingTransformer)
-      .pipe(this.options.out.createStream())
+const outStream = inStream
+  .pipe(WrapLine('|'))
+  .pipe(
+    WrapLine(function (pre, line) {
+      // add 'line numbers' to each line
+      pre = pre || 0
+      return pre + 1
+    })
+  )
+  .pipe(indentTransformer())
+  .pipe(this.lexingTransformer)
+  .pipe(this.options.out.createStream())
     inStream.on('complete', e => {
-      outStream.destro(y)
+      outStream.destroy()
     })
     return outStream
   }
@@ -180,99 +181,9 @@ class FullLexingTransformer {
       } else {
         const fullStream = this.addWriteStreams(readStream)
       }
-
-      debug('before finished')
-
-      // await finished(readStream).then( async (err) => {
-      //   debug('inside finished: lexingTransformer.filesToAlsoParse=', lexingTransformer.filesToAlsoParse)
-      //   // if (err) {
-      //   //   console.error('stream threw error', err)
-      //   // } else
-      //   if (lexingTransformer.filesToAlsoParse.length) {
-      //     console.log(chalk.blue(chalk.bold('Files to also parse:')))
-      //     try {
-      //     for (const filename of lexingTransformer.filesToAlsoParse) {
-      //       const prefix = '  ' + chalk.magenta(filename) + ' -- '
-      //       if (exists(path.resolve('build' + filename + '.json'))) {
-      //         console.log(prefix + 'skipping')
-      //       } else if (alreadyParsed.includes(filename)) {
-      //         console.log(prefix + 'skipping (already parsed)')
-      //       } else {
-      //         console.log(prefix + chalk.green('parsing to ' + path.resolve('build' + filename + '.json')))
-
-      //         const options = await parseArguments(process, printUsage)
-      //         await processFile(options)
-      //         alreadyParsed.push(filename)
-      //       }
-      //     }
-      //   } catch (e) {
-      //     console.error(e)
-      //     throw new Error(`Could not parse ${options?.in?.name}`, { cause: e }, fullFilename)
-      //   }
-      //   }
-
-      // })
-      debug('after finished')
-      // debug('before drain')
-      // fullStream.resume()
-      // debug('after drain')
     } catch (e) {
       console.error(e)
       throw new Error(`Could not parse ${options?.in?.name}`, { cause: e }, options.in.name)
     }
   }
-
-  // TODO: Where is the separation? How much does parseArguments do? Should it create the files() function? Where should createStream() be created?
-  // parseArguments creates the createStream() function today.
-  // Make it a node with children? Or an iterator? https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators
-  // function* makeRangeIterator(start = 0, end = 100, step = 1) {
-  //   let iterationCount = 0;
-  //   for (let i = start; i < end; i += step) {
-  //       iterationCount++;
-  //       yield i;
-  //   }
-  //   return iterationCount;
-  // }
 }
-
-// function processFiles(options) {
-//   options.in.files().forEach(file => {
-
-//     let rewrittenOutOptions;
-//     debug('options.out.isDir()=', options.out.isDir());
-//     if (options.out.isDir()) {
-//       rewrittenOutOptions = Object.assign(options, {
-//         out: {
-//           name: options.out.name,
-//           createStream: () => {
-//             try {
-//               const ws = path.resolve(options.out.name, path.parse(options.in.name).name + '.json');
-//               debug('******* creating write stream ' + ws);
-//               const realWs = fs.createWriteStream(ws, { flags: 'w' });
-//               debug('******* creating 2 write stream ' + realWs);
-//               return realWs;
-//             } catch (e) {
-//               debug("I was wrong", e);
-//               throw e;
-//             }
-//           },
-//           isDir: () => false
-//         }
-//       });
-//     }
-//     else {
-//       rewrittenOutOptions = options;
-//     }
-
-//     debug('parsing ' + file);
-
-//     const rewrittenOptions = Object.assign(options, {
-//       in: {
-//         name: file,
-//         createStream: () => fs.createReadStream(file)
-//       }
-//     }, rewrittenOutOptions);
-
-//     processFile(rewrittenOptions);
-//   });
-// }
