@@ -4,7 +4,7 @@
   "description": "Parses Foo-Dog v1 files taking the output from the indent-transformer and running through line-lexer. Also used as a part of the Pug alternative",
   "main": "dist/index.js",
   "scripts": {
-    "build": "mkdir -p dist && cp src/index.js src/indentState.js src/fooDogIndentState.js dist/",
+    "build": "mkdir -p dist && cp src/index.js src/indentState.js src/fooDogIndentState.js src/FullLexingTransformer.js dist/",
     "test": "npm run build && c8 tap --no-coverage",
     "snap": "tap"
   },
@@ -22,7 +22,6 @@
   "license": "MIT",
   "dependencies": {
     "@foo-dog/indent-transformer": "file:../indent-transformer",
-    "@foo-dog/lexing-transformer": "file:",
     "@foo-dog/line-lexer": "file:../line-lexer",
     "@foo-dog/post-lexing-transformer": "file:../post-lexing-transformer",
     "@foo-dog/utils": "file:../utils",

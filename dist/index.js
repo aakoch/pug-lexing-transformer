@@ -1,12 +1,15 @@
 import stream from 'stream'
 import path from 'path'
-import { Parser, InlineParser } from '@foo-dog/line-lexer'
+import {Parser, InlineParser} from '@foo-dog/line-lexer'
 import debugFunc from 'debug'
-import { inspect } from 'util'
+import {inspect} from 'util'
+
 const debug = debugFunc('lexing-transformer')
 const streamDebug = debugFunc('lexing-transformer:line-analyzer')
 const transformerDebug = debugFunc('lexing-transformer')
 import IndentState from './FooDogIndentState.js'
+import FullLexingTransformer from "./FullLexingTransformer.js";
+
 const parser = Parser
 
 class LexingTransformer extends stream.Transform {
@@ -35,7 +38,7 @@ class LexingTransformer extends stream.Transform {
   #currentState = ''
 
   constructor(options) {
-    super({ decodeStrings: true, encoding: 'utf-8' })
+    super({decodeStrings: true, encoding: 'utf-8'})
 
     transformerDebug('entering constuctor')
     this.filename = options.inFile
@@ -48,8 +51,9 @@ class LexingTransformer extends stream.Transform {
       transformerDebug('Setting allowDigitToStartClassName to ' + options.allowDigitToStartClassName)
       parser.parser.options.allowDigitToStartClassName = options.allowDigitToStartClassName
     }
-    this.stack.push({ symbol: ']' })
+    this.stack.push({symbol: ']'})
   }
+
   _flush(callback) {
     transformerDebug('entering _flush')
     while (this.stack.length > 0) {
@@ -58,6 +62,7 @@ class LexingTransformer extends stream.Transform {
     callback()
     transformerDebug('exiting _flush')
   }
+
   _transform(str, enc, callback) {
     transformerDebug('entering _transform')
     if (str instanceof Buffer) {
@@ -79,7 +84,7 @@ class LexingTransformer extends stream.Transform {
         } else {
           e = new LexingError(
             'Error parsing ' + this.filename + ': ' + err.message.replace('line 1', 'line ' + this.lineNo + ''),
-            { cause: err },
+            {cause: err},
             null,
             this != undefined ? this.lineNo : 'unknown'
           )
@@ -120,7 +125,7 @@ class LexingTransformer extends stream.Transform {
       this.#currentState = this.state.indent(this.#currentState)
 
       ret.push(', "children":[')
-      this.stack.push({ obj: 'children', symbol: ']' })
+      this.stack.push({obj: 'children', symbol: ']'})
 
       this.currentIndent++
     } else if (matches.groups.DEDENT) {
@@ -147,6 +152,7 @@ class LexingTransformer extends stream.Transform {
       }
     }
   }
+
   parseLineAndCreateString(matches, ret) {
     const text = matches.groups.text
     if (text.trim().length > 0) {
@@ -161,7 +167,7 @@ class LexingTransformer extends stream.Transform {
       let nestedChildren = ''
       if (newObj.hasOwnProperty('state')) {
         transformerDebug('returned state=', newObj.state)
-        if (newObj.state == 'NESTED') {
+        if (newObj.state === 'NESTED') {
           if (newObj.children[0].hasOwnProperty('state')) {
             this.#currentState = newObj.children[0].state
           }
@@ -169,9 +175,9 @@ class LexingTransformer extends stream.Transform {
           transformerDebug('childrenStr=' + childrenStr)
           delete newObj.children
           nestedChildren = ', "children":[' + childrenStr + ']'
-        } else if (this.#currentState == 'MULTI_LINE_ATTRS' && newObj.state == 'MULTI_LINE_ATTRS_END') {
+        } else if (this.#currentState === 'MULTI_LINE_ATTRS' && newObj.state === 'MULTI_LINE_ATTRS_END') {
           this.#currentState = 'MULTI_LINE_ATTRS_END'
-        } else if (this.#currentState == 'MULTI_LINE_ATTRS' && !newObj.hasOwnProperty('state')) {
+        } else if (this.#currentState === 'MULTI_LINE_ATTRS' && !newObj.hasOwnProperty('state')) {
         } else {
           this.#currentState = newObj.state
         }
@@ -191,16 +197,16 @@ class LexingTransformer extends stream.Transform {
       const curleysRemovedWithOrWithoutComma = newObjStringifiedWithCurlyesRemoved.length > 0 ? newObjStringifiedWithCurlyesRemoved + ',' : ''
       ret.push(
         ' '.repeat(this.currentIndent * 2) +
-          '{"source":"' +
-          sourceFile +
-          '",' +
-          curleysRemovedWithOrWithoutComma +
-          '"lineNumber": ' +
-          this.lineNo +
-          nestedChildren
+        '{"source":"' +
+        sourceFile +
+        '",' +
+        curleysRemovedWithOrWithoutComma +
+        '"lineNumber": ' +
+        this.lineNo +
+        nestedChildren
       )
 
-      this.stack.push({ obj: newObj.type == 'tag' || newObj.type == 'unknown' ? newObj.name : newObj.type, symbol: '}' })
+      this.stack.push({obj: newObj.type === 'tag' || newObj.type === 'unknown' ? newObj.name : newObj.type, symbol: '}'})
     }
   }
 
@@ -229,7 +235,7 @@ class LexingTransformer extends stream.Transform {
     } catch (err) {
       let e
       if (err.name === 'JisonLexerError') {
-        e = new LexingError(err.message.replace('line 1', 'line ' + this.lineNo), { cause: err })
+        e = new LexingError(err.message.replace('line 1', 'line ' + this.lineNo), {cause: err})
       } else {
         e = err
       }
@@ -251,5 +257,7 @@ class LexingError extends Error {
     this.name = 'LexingError'
   }
 }
+
+LexingTransformer.FullLexingTransformer = FullLexingTransformer
 
 export default LexingTransformer
