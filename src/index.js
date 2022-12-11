@@ -36,6 +36,7 @@ class LexingTransformer extends stream.Transform {
   override
   state = new IndentState()
   #currentState = ''
+  FullLexingTransformer = FullLexingTransformer
 
   constructor(options) {
     super({decodeStrings: true, encoding: 'utf-8'})
@@ -256,7 +257,5 @@ class LexingError extends Error {
     this.name = 'LexingError'
   }
 }
-
-LexingTransformer.FullLexingTransformer = FullLexingTransformer
 
 export default LexingTransformer
