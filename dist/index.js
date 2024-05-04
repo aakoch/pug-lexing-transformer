@@ -1,6 +1,6 @@
 import stream from 'stream'
 import path from 'path'
-import {Parser, InlineParser} from '@foo-dog/line-lexer'
+import {Parser} from '@foo-dog/line-lexer'
 import debugFunc from 'debug'
 import {inspect} from 'util'
 
@@ -10,6 +10,7 @@ const transformerDebug = debugFunc('lexing-transformer')
 import IndentState from './FooDogIndentState.js'
 import FullLexingTransformer from "./FullLexingTransformer.js";
 
+const useNew = false;
 const parser = Parser
 
 class LexingTransformer extends stream.Transform {
@@ -36,12 +37,14 @@ class LexingTransformer extends stream.Transform {
   override
   state = new IndentState()
   #currentState = ''
+  FullLexingTransformer = FullLexingTransformer
 
   constructor(options) {
     super({decodeStrings: true, encoding: 'utf-8'})
 
-    transformerDebug('entering constuctor')
-    this.filename = options.inFile
+    transformerDebug('entering constructor. options=', options)
+    this.filename = options?.inFile || options?.in
+
     if (options.hasOwnProperty('override')) {
       this.override = options.override
     }
@@ -111,7 +114,6 @@ class LexingTransformer extends stream.Transform {
       this.parseLineAndCreateString(matches, ret)
     } else {
       throw new LexingError('Malformed string: ' + inputString.substring(0, 120))
-      // ret.push(inputString)
     }
     let retString = ret.join(' \n')
     if (typeof retString != 'string') {
@@ -175,7 +177,7 @@ class LexingTransformer extends stream.Transform {
           transformerDebug('childrenStr=' + childrenStr)
           delete newObj.children
           nestedChildren = ', "children":[' + childrenStr + ']'
-        } else if (this.#currentState === 'MULTI_LINE_ATTRS' && newObj.state === 'MULTI_LINE_ATTRS_END') {
+        } else if (!useNew && this.#currentState === 'MULTI_LINE_ATTRS' && newObj.state === 'MULTI_LINE_ATTRS_END') {
           this.#currentState = 'MULTI_LINE_ATTRS_END'
         } else if (this.#currentState === 'MULTI_LINE_ATTRS' && !newObj.hasOwnProperty('state')) {
         } else {
@@ -221,6 +223,12 @@ class LexingTransformer extends stream.Transform {
       fileToInclude += '.pug'
     }
 
+    debug('fileToInclude=', fileToInclude)
+    if (fileToInclude.startsWith('/')) {
+      fileToInclude = path.dirname(this.filename) + fileToInclude
+      debug('now fileToInclude=', fileToInclude)
+    }
+
     let resolvedPath = path.resolve(path.dirname(this.filename), fileToInclude)
 
     newObj.resolvedVal = resolvedPath
@@ -257,7 +265,5 @@ class LexingError extends Error {
     this.name = 'LexingError'
   }
 }
-
-LexingTransformer.FullLexingTransformer = FullLexingTransformer
 
 export default LexingTransformer

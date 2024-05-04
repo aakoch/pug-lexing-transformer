@@ -9,7 +9,7 @@ class FooDogIndentState extends IndentState {
   }
   #stickyState = undefined
   indent(state) {
-    debug('indent ' + state)
+    debug('indent: state=', state)
 
     if (this.#stickyState === 'TEXT') {
       super.indent('TEXT_BLOCK')
@@ -18,12 +18,15 @@ class FooDogIndentState extends IndentState {
     }
 
     if (state === 'MULTI_LINE_ATTRS') {
+      debug('indent: state === MULTI_LINE_ATTRS. calling super.indent(MULTI_LINE_ATTRS)')
       // ??
       super.indent('MULTI_LINE_ATTRS')
 
+      debug('indent: state === MULTI_LINE_ATTRS. setting stickyState to MULTI_LINE_ATTRS')
       this.#stickyState = state
 
       // ??
+      debug('indent: state === MULTI_LINE_ATTRS. returning MULTI_LINE_ATTRS')
       return 'MULTI_LINE_ATTRS';
     }
     // else 
@@ -55,9 +58,11 @@ class FooDogIndentState extends IndentState {
     return super.indent(state)
   }
   nodent(state) {
-    debug('nodent')
+    debug('nodent: this.#stickyState=', this.#stickyState)
     const tempNodent = super.nodent()
-    if (state != null && state != undefined && state === 'MULTI_LINE_ATTRS_END') {
+    debug('nodent: tempNodent=', tempNodent)
+    if (tempNodent === 'MULTI_LINE_ATTRS') {
+    // if (state != null && state != undefined && state === 'MULTI_LINE_ATTRS_END') {
       super.dedent()
       return undefined
     }
@@ -81,17 +86,20 @@ class FooDogIndentState extends IndentState {
         }
         return undefined
       }
-      else 
-      if (this.#stickyState === 'UNBUF_CODE_BLOCK') {
+      else if (this.#stickyState === 'UNBUF_CODE_BLOCK') {
         debug('dedent: stack=', super.stack)
         return super.dedent()
       }
-      // else if (this.#stickyState === 'MULTI_LINE_ATTRS') {
-      //   if (tempNodent === 'MULTI_LINE_ATTRS') {
-      //     return 'MULTI_LINE_ATTRS'
-      //   }
-      //   return undefined
+      // else if (tempNodent === 'MULTI_LINE_ATTRS') {
+      //   return super.dedent()
       // }
+      else if (this.#stickyState === 'MULTI_LINE_ATTRS') {
+      //   if (tempNodent === 'MULTI_LINE_ATTRS') {
+      this.#stickyState = undefined
+          // return 'MULTI_LINE_ATTRS'
+      //   }
+        return 'MULTI_LINE_ATTRS_END'
+      }
       
       const tempStickyState = this.#stickyState
       this.#stickyState = undefined

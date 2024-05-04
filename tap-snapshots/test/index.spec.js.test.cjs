@@ -7,7 +7,7 @@
 'use strict'
 exports[`test/index.spec.js TAP test basic file with snapshot > File test/pug/basic.pug did not match snapshot 1`] = `
 [ 
-{"source":"/Users/aakoch/projects/new-foo/workspaces/lexing-transformer/test/pug/basic.pug","name":"html","type":"tag","lineNumber": 1, "children":[ 
-  {"source":"/Users/aakoch/projects/new-foo/workspaces/lexing-transformer/test/pug/basic.pug","name":"body","type":"tag","lineNumber": 2, "children":[ 
-    {"source":"/Users/aakoch/projects/new-foo/workspaces/lexing-transformer/test/pug/basic.pug","name":"h1","type":"tag","val":"Title","lineNumber": 3}]}]}]
+{"source":"/Users/aakoch/projects/foo-dog/workspaces/lexing-transformer/test/pug/basic.pug","name":"html","type":"tag","lineNumber": 1, "children":[ 
+  {"source":"/Users/aakoch/projects/foo-dog/workspaces/lexing-transformer/test/pug/basic.pug","name":"body","type":"tag","lineNumber": 2, "children":[ 
+    {"source":"/Users/aakoch/projects/foo-dog/workspaces/lexing-transformer/test/pug/basic.pug","name":"h1","type":"tag","val":"Title","lineNumber": 3}]}]}]
 `

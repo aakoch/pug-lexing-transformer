@@ -8,6 +8,7 @@ const debug = debugFunc('lexing-transformer:test')
 import LexingTransformer from '../src/index.js'
 import { simpleProjectRootDir } from '@foo-dog/utils'
 import concat from 'concat-stream'
+import chalk from 'chalk'
 
 function testString(input, expected, test) {
   const lexingTransformer = new LexingTransformer({inFile: 'test'});
@@ -31,28 +32,38 @@ function testString(input, expected, test) {
         throw new Error(e.message + '\nBody:\n' + body, { cause: e })
       }
       test.end()
-    }));
-}
-
-function testFile(fullPath, expected, test) {
-
-  const lexingTransformer = new LexingTransformer({inFile: fullPath});
-  fs.createReadStream(fullPath, { encoding: 'utf-8' })
-    .pipe(WrapLine('|'))
-    .pipe(WrapLine(function (pre, line) {
-      // add 'line numbers' to each line
-      pre = pre || 0;
-      return pre + 1;
     }))
-    .pipe(indentTransformer())
-    .pipe(lexingTransformer)
-    .pipe(concat({ encoding: 'string' }, body => {
-      debug('body=', body)
-      test.ok(body)
-      test.same(JSON.parse(body), expected)
-      test.end()
-    }));
+    .on(
+      "finish",
+      function handleFinish() {
+
+        console.log( chalk.green( "JSONStream serialization complete!" ) );
+        console.log( "- - - - - - - - - - - - - - - - - - - - - - -" );
+
+      }
+    );
+
 }
+
+// function testFile(fullPath, expected, test) {
+//
+//   const lexingTransformer = new LexingTransformer({inFile: fullPath});
+//   fs.createReadStream(fullPath, { encoding: 'utf-8' })
+//     .pipe(WrapLine('|'))
+//     .pipe(WrapLine(function (pre, line) {
+//       // add 'line numbers' to each line
+//       pre = pre || 0;
+//       return pre + 1;
+//     }))
+//     .pipe(indentTransformer())
+//     .pipe(lexingTransformer)
+//     .pipe(concat({ encoding: 'string' }, body => {
+//       debug('body=', body)
+//       test.ok(body)
+//       test.same(JSON.parse(body), expected)
+//       test.end()
+//     }));
+// }
 
 async function testSnapshot(fullPath, test) {
   try {
@@ -80,5 +91,5 @@ async function testSnapshot(fullPath, test) {
 }
 
 export {
-  tap, testString, testFile, testSnapshot, simpleProjectRootDir
+  tap, testString, testSnapshot, simpleProjectRootDir //, testFile
 }

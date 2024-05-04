@@ -2,8 +2,6 @@ import path from "path";
 import LexingTransformer from "./index.js";
 import WrapLine from "@jaredpalmer/wrapline";
 import stream from "node:stream";
-import util from 'node:util'
-import fs from 'node:fs'
 import indentTransformer from '@foo-dog/indent-transformer'
 import debugFunc from 'debug'
 const debug = debugFunc('lexing-transformer:full')
